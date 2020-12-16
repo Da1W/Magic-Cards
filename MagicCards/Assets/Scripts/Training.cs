@@ -69,7 +69,7 @@ public class Training : MonoBehaviour
         CellSlotsOnMap = FindObjectsOfType<CellSlot>();
         stepsCount.text = "Количество ходов: 0";
         levelText.text = "Уровень " + GameConstants.levelNumber;
-        //helperText.text = GameConstants.levelsText[GameConstants.levelNumber];
+        if(GameConstants.levelNumber == 0) helperText.text = GameConstants.welcomeText;
     }
 
     public void PlusStep()

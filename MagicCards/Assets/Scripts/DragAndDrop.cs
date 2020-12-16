@@ -42,7 +42,7 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        var data = PointerRaycast(Input.mousePosition); // пускаем луч
+        var data = PointerRaycast(eventData.position); // пускаем луч
 
         if (data != null && data.tag != "Cell")
         {

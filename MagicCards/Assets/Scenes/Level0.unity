@@ -514,6 +514,8 @@ MonoBehaviour:
   levelText: {fileID: 833992679}
   helperText: {fileID: 932261714}
   steps: 0
+  correct: {fileID: 0}
+  CellSlotsOnMap: []
 --- !u!1 &538890847
 GameObject:
   m_ObjectHideFlags: 0
@@ -2472,6 +2474,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Field
       objectReference: {fileID: 0}
+    - target: {fileID: 8060492481293583609, guid: 78e865e3f17137341b3d72f9b2fbb11e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8060492481293583610, guid: 78e865e3f17137341b3d72f9b2fbb11e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2567,6 +2573,10 @@ PrefabInstance:
     - target: {fileID: 8060492481293583611, guid: 78e865e3f17137341b3d72f9b2fbb11e, type: 3}
       propertyPath: decimals.Array.data[1]
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8060492481293583612, guid: 78e865e3f17137341b3d72f9b2fbb11e, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8060492482710622229, guid: 78e865e3f17137341b3d72f9b2fbb11e, type: 3}
       propertyPath: m_IsActive
