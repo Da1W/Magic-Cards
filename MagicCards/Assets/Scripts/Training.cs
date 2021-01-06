@@ -5,14 +5,22 @@ using UnityEngine.UI;
 
 public class Training : MonoBehaviour
 {
-    public Text stepsCount;
-    public Text levelText;
-    public Text helperText;
+    [SerializeField] Text stepsCount;
+    [SerializeField] Text levelText;
+    [SerializeField] Text helperText;
     public int steps = 0;
 
     public GameObject correct;
 
-    public CellSlot[] CellSlotsOnMap;
+    private CellSlot[] CellSlotsOnMap;
+
+    void Start()
+    {
+        CellSlotsOnMap = FindObjectsOfType<CellSlot>();
+        stepsCount.text = "Количество ходов: 0";
+        levelText.text = "Уровень " + GameConstants.levelNumber;
+        if(GameConstants.levelNumber == 0) helperText.text = GameConstants.welcomeText;
+    }
     public void Undo()
     {
         var steps = GameConstants.steps;
@@ -26,9 +34,7 @@ public class Training : MonoBehaviour
             }
             else if (steps.Peek() == "NextLevel")
             {
-                GameConstants.levelNumber--;
-                var s = "Level" + GameConstants.levelNumber;
-                Application.LoadLevel(s);
+                PreviousLevel();
                 steps.Pop();
             }
         }
@@ -38,6 +44,12 @@ public class Training : MonoBehaviour
     {
         GameConstants.steps.Push("NextLevel");
         GameConstants.levelNumber++;
+        var s = "Level" + GameConstants.levelNumber;
+        Application.LoadLevel(s);
+    }
+    public void PreviousLevel()
+    {
+        GameConstants.levelNumber--;
         var s = "Level" + GameConstants.levelNumber;
         Application.LoadLevel(s);
     }
@@ -64,23 +76,10 @@ public class Training : MonoBehaviour
         }
         return true;
     }
-    void Start()
-    {
-        CellSlotsOnMap = FindObjectsOfType<CellSlot>();
-        stepsCount.text = "Количество ходов: 0";
-        levelText.text = "Уровень " + GameConstants.levelNumber;
-        if(GameConstants.levelNumber == 0) helperText.text = GameConstants.welcomeText;
-    }
 
     public void PlusStep()
     {
         steps++;
         stepsCount.text = "Количество ходов: " + steps.ToString();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

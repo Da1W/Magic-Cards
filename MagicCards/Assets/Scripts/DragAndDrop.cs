@@ -20,6 +20,7 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
         suitsManager = FindObjectOfType<SuitsManager>();
         canvas = FindObjectOfType<Canvas>();
     }
+
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
@@ -47,6 +48,10 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
         if (data != null && data.tag != "Cell")
         {
             DeleteCard();
+        }
+        else
+        {
+            data.transform.parent.gameObject.GetComponent<CellSlot>().OnDrop(eventData);
         }
         //else
         //{
