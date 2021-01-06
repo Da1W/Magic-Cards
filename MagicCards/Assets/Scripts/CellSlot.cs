@@ -11,15 +11,16 @@ public class CellSlot : MonoBehaviour, IDropHandler
 
     public List<string> decimals;
     public double rightDecimal = 1;
-    public Text decimals1;
-    public Text decimals2;
-    public List<Text> decimalsText;
-    public SuitsManager suitsManager;
     public GameObject rightFill;
-
-    public bool rightCell = false;
-
+    //[SerializeField] Text decimals1;
+    //[SerializeField] Text decimals2;
     public Training trainingManager;
+
+    //private List<Text> decimalsText;
+    private bool rightCell = false;
+    private SuitsManager suitsManager;
+    private GameObject cellSlotFake;
+    private GameObject[] cellSlotFakes;
 
     void Start()
     {
@@ -31,10 +32,12 @@ public class CellSlot : MonoBehaviour, IDropHandler
 
         suitsManager = FindObjectOfType<SuitsManager>();
         trainingManager = FindObjectOfType<Training>();
+        cellSlotFake = GameObject.Find("CellSlotFake");
+        cellSlotFakes = GameObject.FindGameObjectsWithTag("CellSlotFake");
 
-        decimalsText = new List<Text>();
-        decimalsText.Add(decimals1);
-        decimalsText.Add(decimals2);
+        //decimalsText = new List<Text>();
+        //decimalsText.Add(decimals1);
+        //decimalsText.Add(decimals2);
 
         if (decimals.Count != 0)
         {
@@ -45,7 +48,9 @@ public class CellSlot : MonoBehaviour, IDropHandler
                 rightDecimal *= double.Parse(nums[0]) / double.Parse(nums[1]);
                 //text_dec.text = nums[0] + "\n—" + nums[1];
 
-                decimalsText[i].text = nums[0] + "\n—\n" + nums[1];
+                //decimalsText[i].text = nums[0] + "\n—\n" + nums[1];
+                cellSlotFakes[i].transform.GetChild(0).GetComponent<Text>().text = nums[0];
+                cellSlotFakes[i].transform.GetChild(1).GetComponent<Text>().text = nums[1];
                 i++;
             }
 
@@ -71,6 +76,8 @@ public class CellSlot : MonoBehaviour, IDropHandler
             eventData.pointerDrag.GetComponent<DragAndDrop>().cellSlot = this;
             eventData.pointerDrag.GetComponent<DragAndDrop>().IsInCell = true;
             items.Add(eventData.pointerDrag);
+            eventData.pointerDrag.GetComponent<RectTransform>().sizeDelta =
+                cellSlotFake.GetComponent<RectTransform>().sizeDelta;
             SetCorrectPositions();
             CheckWin();
             GameConstants.usedCellSlots.Push(this);

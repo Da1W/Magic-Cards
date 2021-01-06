@@ -9,6 +9,7 @@ TagManager:
   - club
   - diamond
   - spade
+  - CellSlotFake
   layers:
   - Default
   - TransparentFX

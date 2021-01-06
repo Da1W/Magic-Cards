@@ -9,10 +9,10 @@ public class MenuControls : MonoBehaviour
     public Text playerNameField;
     public void PlayButton()
     {
-        string userName = playerNameField.text == "" ? "Мой друг" : playerNameField.text;
-        GameConstants.welcomeText =  string.Format("Приветствую тебя, {0}. Добро пожаловать в игру," +
-            " посвященную теме теории вероятности ”Зависимые события и условная вероятность”." +
-            " Давай ознакомимся с правилами игры. (Нажми на меня чтобы продолжить)", userName); 
+        //string userName = playerNameField.text == "" ? "Мой друг" : playerNameField.text;
+        //GameConstants.welcomeText =  string.Format("Приветствую тебя, {0}. Добро пожаловать в игру," +
+        //    " посвященную теме теории вероятности ”Зависимые события и условная вероятность”." +
+        //    " Давай ознакомимся с правилами игры. (Нажми на меня чтобы продолжить)", userName); 
         GameConstants.gameMode = 1;
         
           SceneManager.LoadSceneAsync("Level" + GameConstants.levelNumber);

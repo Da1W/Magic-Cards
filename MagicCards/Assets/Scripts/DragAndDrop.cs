@@ -1,19 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
+    public bool IsInCell = false;
+    public CellSlot cellSlot;
+    public double probability; 
+    public SuitsManager suitsManager;
+    [SerializeField] Text numerator;
+    [SerializeField] Text denominator;
+    [SerializeField] GameObject decimLine;
+
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
     private Canvas canvas;
-    public bool IsInCell = false;
-    public CellSlot cellSlot;
-
-    public double probability; 
-
-    public SuitsManager suitsManager;
 
     public void Start()
     {
@@ -31,6 +34,9 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
         if (cellSlot == null)
         {
             probability = suitsManager.CalculateProbability(this.gameObject);
+            numerator.text = suitsManager.GetCurrentSuit(this.gameObject).ToString();
+            denominator.text = suitsManager.GetCurrentPack().ToString();
+            decimLine.SetActive(true);
         }
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 0.7f;

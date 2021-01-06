@@ -12,7 +12,7 @@ public class Training : MonoBehaviour
     [SerializeField] Text helperText;
     public int steps = 0;
 
-    public GameObject correct;
+    public GameObject[] correct;
 
     private CellSlot[] CellSlotsOnMap;
 
@@ -21,7 +21,7 @@ public class Training : MonoBehaviour
         CellSlotsOnMap = FindObjectsOfType<CellSlot>();
         stepsCount.text = "Количество ходов: 0";
         levelText.text = "Уровень " + GameConstants.levelNumber;
-        if(GameConstants.levelNumber == 0) helperText.text = GameConstants.welcomeText;
+        //if(GameConstants.levelNumber == 0) helperText.text = GameConstants.welcomeText;
     }
     public void Undo()
     {
@@ -58,11 +58,17 @@ public class Training : MonoBehaviour
 
     public void ShowCorrect()
     {
-        correct.SetActive(true);
+        foreach (var obj in correct)
+        {
+            obj.SetActive(true);
+        }
     }
     public void CloseCorrect()
     {
-        correct.SetActive(false);
+        foreach (var obj in correct)
+        {
+            obj.SetActive(false);
+        }
     }
 
     public void BackToMenu()

@@ -49,6 +49,16 @@ public class SuitsManager : MonoBehaviour
         return (double)suits[card.tag] / (double)pack;
     }
 
+    public int GetCurrentSuit(GameObject card)
+    {
+        return suits[card.tag];
+    }
+
+    public int GetCurrentPack()
+    {
+        return pack;
+    }
+
     public void UpdadeSuits(GameObject card, int add)
     {
         pack += add;
