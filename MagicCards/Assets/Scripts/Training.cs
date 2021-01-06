@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class Training : MonoBehaviour
 {
     [SerializeField] Text stepsCount;
-    [SerializeField] Text levelText;
+    [SerializeField] TextMeshProUGUI levelText;
     [SerializeField] Text helperText;
     public int steps = 0;
 
