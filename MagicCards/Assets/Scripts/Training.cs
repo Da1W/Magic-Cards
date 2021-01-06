@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Training : MonoBehaviour
 {
@@ -45,13 +46,13 @@ public class Training : MonoBehaviour
         GameConstants.steps.Push("NextLevel");
         GameConstants.levelNumber++;
         var s = "Level" + GameConstants.levelNumber;
-        Application.LoadLevel(s);
+        SceneManager.LoadSceneAsync(s);
     }
     public void PreviousLevel()
     {
         GameConstants.levelNumber--;
         var s = "Level" + GameConstants.levelNumber;
-        Application.LoadLevel(s);
+        SceneManager.LoadSceneAsync(s);
     }
 
     public void ShowCorrect()
@@ -65,7 +66,7 @@ public class Training : MonoBehaviour
 
     public void BackToMenu()
     {
-        Application.LoadLevel(0);
+        SceneManager.LoadSceneAsync(0);
     }
 
     public bool CheckWin()
