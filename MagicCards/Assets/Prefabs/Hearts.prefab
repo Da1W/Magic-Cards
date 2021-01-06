@@ -67,9 +67,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2ccfa08aae4655541ac961457d9c1a28, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2f79540375964ac4f9cb8c63f1b8a893, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -91,6 +91,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsInCell: 0
   cellSlot: {fileID: 0}
+  probability: 0
+  suitsManager: {fileID: 0}
 --- !u!225 &995955680474764997
 CanvasGroup:
   m_ObjectHideFlags: 0
