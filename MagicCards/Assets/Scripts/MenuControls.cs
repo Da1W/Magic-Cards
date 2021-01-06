@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class MenuControls : MonoBehaviour
 {
-    private SceneManager sceneManager;
     public Text playerNameField;
     public void PlayButton()
     {
@@ -15,7 +14,8 @@ public class MenuControls : MonoBehaviour
             " посвященную теме теории вероятности ”Зависимые события и условная вероятность”." +
             " Давай ознакомимся с правилами игры. (Нажми на меня чтобы продолжить)", userName); 
         GameConstants.gameMode = 1;
-        Application.LoadLevel("Level" + GameConstants.levelNumber);
+        
+          SceneManager.LoadSceneAsync("Level" + GameConstants.levelNumber);
     }
 
     public void DropProgressButton()
