@@ -20,7 +20,7 @@ public class CellSlot : MonoBehaviour, IDropHandler
     private bool rightCell = false;
     private SuitsManager suitsManager;
     private GameObject cellSlotFake;
-    private GameObject[] cellSlotFakes;
+    public GameObject[] cellSlotFakes;
 
     void Start()
     {
@@ -33,7 +33,7 @@ public class CellSlot : MonoBehaviour, IDropHandler
         suitsManager = FindObjectOfType<SuitsManager>();
         trainingManager = FindObjectOfType<Training>();
         cellSlotFake = GameObject.Find("CellSlotFake");
-        cellSlotFakes = GameObject.FindGameObjectsWithTag("CellSlotFake");
+
 
         //decimalsText = new List<Text>();
         //decimalsText.Add(decimals1);
@@ -59,7 +59,7 @@ public class CellSlot : MonoBehaviour, IDropHandler
     }
     public void OnDrop(PointerEventData eventData)
     {
-        if (eventData.pointerDrag != null && items.Count < 4 && !items.Contains(eventData.pointerDrag))
+        if (eventData.pointerDrag != null && items.Count < trainingManager.maxCardsInCells && !items.Contains(eventData.pointerDrag))
         {
             eventData.pointerDrag.transform.position = transform.position;
             eventData.pointerDrag.transform.SetParent(transform);

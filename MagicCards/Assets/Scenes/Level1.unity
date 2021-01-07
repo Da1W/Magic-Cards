@@ -679,10 +679,10 @@ MonoBehaviour:
   stepsCount: {fileID: 2034063483}
   levelText: {fileID: 620656006}
   helperText: {fileID: 932261714}
-  steps: 0
   correct:
   - {fileID: 2118620453}
   - {fileID: 400837687}
+  maxCardsInCells: 1
 --- !u!114 &519420036
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3399,6 +3399,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8060492481293583611, guid: 78e865e3f17137341b3d72f9b2fbb11e, type: 3}
+      propertyPath: cellSlotFakes.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8060492481293583611, guid: 78e865e3f17137341b3d72f9b2fbb11e, type: 3}
       propertyPath: decimals.Array.data[0]
       value: 9/36
       objectReference: {fileID: 0}
@@ -3410,6 +3414,10 @@ PrefabInstance:
       propertyPath: rightDecimal
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8060492481293583611, guid: 78e865e3f17137341b3d72f9b2fbb11e, type: 3}
+      propertyPath: cellSlotFakes.Array.data[0]
+      value: 
+      objectReference: {fileID: 907068265}
     - target: {fileID: 8060492481293583612, guid: 78e865e3f17137341b3d72f9b2fbb11e, type: 3}
       propertyPath: m_Enabled
       value: 1

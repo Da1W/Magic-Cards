@@ -10,10 +10,10 @@ public class Training : MonoBehaviour
     [SerializeField] Text stepsCount;
     [SerializeField] TextMeshProUGUI levelText;
     [SerializeField] Text helperText;
-    public int steps = 0;
+    private int steps = 0;
 
     public GameObject[] correct;
-
+    public int maxCardsInCells;
     private CellSlot[] CellSlotsOnMap;
 
     void Start()
@@ -82,6 +82,8 @@ public class Training : MonoBehaviour
         {
             if (!e.rightFill.activeSelf) return false;
         }
+        if (GameConstants.levelNumber == 5 && steps >= 8);
+            return false;
         return true;
     }
 
