@@ -14,6 +14,10 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
     [SerializeField] Text denominator;
     [SerializeField] GameObject decimLine;
 
+    public delegate void OnCardDrag();
+    public static event OnCardDrag OnCardDragBegin;
+    public static event OnCardDrag OnCardDragEnd;
+
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
     private Canvas canvas;
@@ -22,6 +26,10 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
     {
         suitsManager = FindObjectOfType<SuitsManager>();
         canvas = FindObjectOfType<Canvas>();
+        OnCardDragBegin -= OffBlockRaycast;
+        OnCardDragBegin += OffBlockRaycast;
+        OnCardDragEnd -= OnBlockRaycast;
+        OnCardDragEnd += OnBlockRaycast;
     }
 
     private void Awake()
@@ -40,11 +48,13 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
         }
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 0.7f;
+        OnCardDragBegin?.Invoke();
     }
 
     public void OnDrag(PointerEventData eventData)
     {
         rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+        //Debug.Log(PointerRaycast(eventData.position));
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -69,6 +79,7 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
 
         canvasGroup.blocksRaycasts = true;
         canvasGroup.alpha = 1f;
+        OnCardDragEnd?.Invoke();
     }
 
     public void DeleteCard()
@@ -82,6 +93,8 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
             cellSlot.CheckWin();
             cellSlot.trainingManager.PlusStep();
         }
+        OnCardDragBegin -= OffBlockRaycast;
+        OnCardDragEnd -= OnBlockRaycast;
         Destroy(gameObject);
     }
 
@@ -107,4 +120,15 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
             Instantiate(gameObject, transform.parent);
         }
     }
+
+    private void OffBlockRaycast()
+    {
+        canvasGroup.blocksRaycasts = false;
+    }
+
+    private void OnBlockRaycast()
+    {
+        canvasGroup.blocksRaycasts = true;
+    }
+
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
@@ -20,7 +21,7 @@ public class CellSlot : MonoBehaviour, IDropHandler
     private bool rightCell = false;
     private SuitsManager suitsManager;
     private GameObject cellSlotFake;
-    public GameObject[] cellSlotFakes;
+    private GameObject[] cellSlotFakes;
 
     void Start()
     {
@@ -34,7 +35,8 @@ public class CellSlot : MonoBehaviour, IDropHandler
         trainingManager = FindObjectOfType<Training>();
         cellSlotFake = GameObject.Find("CellSlotFake");
 
-
+        var ChildsTransforms = GetComponentsInChildren<Transform>();
+        cellSlotFakes = ChildsTransforms.Where(comp => comp.gameObject.tag == "CellSlotFake").Select(comp => comp.gameObject).ToArray();
         //decimalsText = new List<Text>();
         //decimalsText.Add(decimals1);
         //decimalsText.Add(decimals2);

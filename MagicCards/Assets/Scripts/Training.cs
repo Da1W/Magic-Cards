@@ -82,7 +82,7 @@ public class Training : MonoBehaviour
         {
             if (!e.rightFill.activeSelf) return false;
         }
-        if (GameConstants.levelNumber == 5 && steps >= 8);
+        if (GameConstants.levelNumber == 5 && steps >= 8)
             return false;
         return true;
     }
