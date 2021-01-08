@@ -93,8 +93,6 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
             cellSlot.CheckWin();
             cellSlot.trainingManager.PlusStep();
         }
-        OnCardDragBegin -= OffBlockRaycast;
-        OnCardDragEnd -= OnBlockRaycast;
         Destroy(gameObject);
     }
 
@@ -131,4 +129,9 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
         canvasGroup.blocksRaycasts = true;
     }
 
+    private void OnDestroy()
+    {
+        OnCardDragBegin -= OffBlockRaycast;
+        OnCardDragEnd -= OnBlockRaycast;
+    }
 }
