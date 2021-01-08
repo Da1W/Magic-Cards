@@ -10,5 +10,4 @@ public static class GameConstants
     public static int levelNumber;
     public static string playerName;
     public static string welcomeText;
-    
 }

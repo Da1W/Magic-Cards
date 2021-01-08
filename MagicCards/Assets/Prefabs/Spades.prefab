@@ -207,7 +207,7 @@ GameObject:
   - component: {fileID: 3416996248976655796}
   m_Layer: 5
   m_Name: Spades
-  m_TagString: Untagged
+  m_TagString: spade
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

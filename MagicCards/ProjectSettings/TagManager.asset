@@ -10,6 +10,7 @@ TagManager:
   - diamond
   - spade
   - CellSlotFake
+  - Slot
   layers:
   - Default
   - TransparentFX

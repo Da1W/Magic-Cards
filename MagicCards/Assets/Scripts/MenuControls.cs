@@ -15,7 +15,13 @@ public class MenuControls : MonoBehaviour
         //    " Давай ознакомимся с правилами игры. (Нажми на меня чтобы продолжить)", userName); 
         GameConstants.gameMode = 1;
         
-          SceneManager.LoadSceneAsync("Level" + GameConstants.levelNumber);
+        SceneManager.LoadSceneAsync("Level" + GameConstants.levelNumber);
+    }
+
+    public void PlayBattleButton()
+    {
+        GameConstants.gameMode = 2;
+        SceneManager.LoadSceneAsync("Battle");
     }
 
     public void DropProgressButton()

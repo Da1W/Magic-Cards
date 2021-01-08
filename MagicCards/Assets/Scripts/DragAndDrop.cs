@@ -10,9 +10,10 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
     public CellSlot cellSlot;
     public double probability; 
     public SuitsManager suitsManager;
-    [SerializeField] Text numerator;
-    [SerializeField] Text denominator;
-    [SerializeField] GameObject decimLine;
+    public Transform startPosition;
+    public Text numerator;
+    public Text denominator;
+    public GameObject decimLine;
 
     public delegate void OnCardDrag();
     public static event OnCardDrag OnCardDragBegin;
@@ -39,6 +40,7 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
+        startPosition = gameObject.transform;
         if (cellSlot == null)
         {
             probability = suitsManager.CalculateProbability(this.gameObject);
@@ -63,7 +65,10 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
 
         if (data != null && data.tag != "Cell")
         {
-            DeleteCard();
+            if (GameConstants.gameMode == 1)
+                DeleteCard();
+            else
+                BackIntoPos();
         }
         else
         {
@@ -80,6 +85,11 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
         canvasGroup.blocksRaycasts = true;
         canvasGroup.alpha = 1f;
         OnCardDragEnd?.Invoke();
+    }
+
+    public void BackIntoPos()
+    {
+        transform.localPosition = startPosition.position;
     }
 
     public void DeleteCard()
@@ -113,7 +123,7 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (!IsInCell)
+        if (!IsInCell && GameConstants.gameMode == 1)
         {
             Instantiate(gameObject, transform.parent);
         }
@@ -131,6 +141,7 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
 
     private void OnDestroy()
     {
+        OnCardDragEnd?.Invoke();
         OnCardDragBegin -= OffBlockRaycast;
         OnCardDragEnd -= OnBlockRaycast;
     }
