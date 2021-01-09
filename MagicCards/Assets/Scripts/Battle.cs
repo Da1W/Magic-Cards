@@ -172,10 +172,7 @@ public class Battle : MonoBehaviour
 
     public void MoveCard(GameObject card, GameObject target)
     {
-        while (card.transform.position != target.transform.position)
-        { 
         Vector2.MoveTowards(card.transform.position, target.transform.position, 5);
-        }
     }
 
     public void ClearParadox(GameObject card)

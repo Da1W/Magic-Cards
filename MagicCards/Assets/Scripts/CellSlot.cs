@@ -74,7 +74,7 @@ public class CellSlot : MonoBehaviour, IDropHandler
     {
         var droppedObject = eventData.pointerDrag.GetComponent<DragAndDrop>();
 
-        if (eventData.pointerDrag != null && items.Count < trainingManager.maxCardsInCells 
+        if (eventData.pointerDrag != null && items.Count < trainingManager.maxCardsInCells
             && !items.Contains(eventData.pointerDrag))
         {
             eventData.pointerDrag.transform.position = transform.position;
@@ -87,7 +87,7 @@ public class CellSlot : MonoBehaviour, IDropHandler
                 droppedObject.cellSlot.SetCorrectPositions();
                 droppedObject.cellSlot.CheckWin();
             }
-            else 
+            else
             {
                 suitsManager.UpdadeSuits(eventData.pointerDrag, -1);
             }
@@ -192,7 +192,7 @@ public class CellSlot : MonoBehaviour, IDropHandler
         {
             rightCell = true;
             rightFill.SetActive(true);
-            if(trainingManager.CheckWin())
+            if (trainingManager.CheckWin())
                 trainingManager.ShowCorrect();
         }
         else

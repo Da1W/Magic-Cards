@@ -8,7 +8,7 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
 {
     public bool IsInCell = false;
     public CellSlot cellSlot;
-    public double probability; 
+    public double probability;
     public SuitsManager suitsManager;
     public Transform startPosition;
     public Text numerator;
