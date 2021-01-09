@@ -3,10 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
 
 public class Blur : MonoBehaviour
 {
-    [SerializeField] Volume volume;
+    private Volume volume;
+
+    public void Start()
+    {
+        SceneManager.sceneLoaded += OnLoadScene;
+    }
     public void BlurOn()
     {
         DepthOfField dof;
@@ -23,5 +29,10 @@ public class Blur : MonoBehaviour
         {
             dof.active = false;
         }
+    }
+
+    public void OnLoadScene(Scene scene,LoadSceneMode mode)
+    {
+        volume = gameObject.GetComponent<Volume>();
     }
 }
