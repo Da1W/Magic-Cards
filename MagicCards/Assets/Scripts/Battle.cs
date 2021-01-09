@@ -4,6 +4,7 @@ using System.Linq;
 using System;
 using UnityEngine.UI;
 using UnityEngine;
+using TMPro;
 
 public class Battle : MonoBehaviour
 {
@@ -24,6 +25,8 @@ public class Battle : MonoBehaviour
     private BattleBot bot;
     [SerializeField] Text playerScoreText;
     [SerializeField] Text botScoreText;
+    [SerializeField] GameObject WinTable;
+    [SerializeField] GameObject LoseTable;
 
     Dictionary<int, GameObject> suits = new Dictionary<int, GameObject>(4);
 
@@ -170,21 +173,26 @@ public class Battle : MonoBehaviour
     {
         if (suitsManager.pack >= 4)
         {
+            StopAllCoroutines();
             Debug.Log("NextRound");
             GameConstants.roundNumber += 1;
             FindObjectOfType<Training>().UpdateRoundNumber();
             DealAllCards();
             bot.ReloadPreviewCards();
-            StopAllCoroutines();
             ClearMap();
         }
         else 
         {
-            Debug.Log("Game over");
-            if (botScore > playerScore)
-                Debug.Log("BOT WIN");
+            if (playerScore <= botScore)
+            {
+                LoseTable.GetComponentInChildren<TextMeshProUGUI>().text = $"Вы проиграли\nВаш Счет:\n{playerScore}\nСчет Противника:\n{botScore}";
+                LoseTable.SetActive(true);
+            }
             else
-                Debug.Log("PLAYER WIN");
+            {
+                WinTable.GetComponentInChildren<TextMeshProUGUI>().text = $"Вы Выиграли\nВаш Счет:\n{playerScore}\nСчет Противника:\n{botScore}";
+                WinTable.SetActive(true);
+            }
         }
     }
 
@@ -196,7 +204,7 @@ public class Battle : MonoBehaviour
 
     public void MoveCard(GameObject card, GameObject target)
     {
-        StartCoroutine(MoveCardCorutine(card, target));
+        //StartCoroutine(MoveCardCorutine(card, target));
     }
     public IEnumerator MoveCardCorutine(GameObject card, GameObject target)
     {

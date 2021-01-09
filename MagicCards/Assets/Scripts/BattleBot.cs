@@ -40,7 +40,7 @@ public class BattleBot : MonoBehaviour
             var activePrevCards = previewCards.Where(comp => comp.activeInHierarchy).ToArray();
             var cardToSet = activePrevCards[Random.Range(0, activePrevCards.Length - 1)];
             //StartCoroutine(WaitForThink());
-            StartCoroutine(SetCard(emptyCells, slots, cardToSet));
+            SetCard(emptyCells, slots, cardToSet);
         }
     }
 
@@ -53,7 +53,7 @@ public class BattleBot : MonoBehaviour
         }
     }
 
-    private IEnumerator SetCard(CellSlot[] emptyCells, GameObject[] slots, GameObject prevCard)
+    private void SetCard(CellSlot[] emptyCells, GameObject[] slots, GameObject prevCard)
     {
         var card = slots[Random.Range(0, slots.Length - 1)].transform.GetChild(0).gameObject;
         var cardProp = card.GetComponent<DragAndDrop>();
@@ -67,8 +67,6 @@ public class BattleBot : MonoBehaviour
         battle.MoveCard(prevCard, cellToDrop.gameObject);
         cellToDrop.DropCardFromBot(card);
         StartCoroutine(HideAfterSeconds(prevCard));
-
-        yield return null;
     }
 
     private IEnumerator HideAfterSeconds(GameObject card)

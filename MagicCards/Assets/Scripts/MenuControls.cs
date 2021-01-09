@@ -24,6 +24,12 @@ public class MenuControls : MonoBehaviour
         SceneManager.LoadSceneAsync("Battle");
     }
 
+    public void PlayForecastersBattle()
+    {
+        GameConstants.gameMode = 3;
+        SceneManager.LoadSceneAsync("ForeCasterBattle");
+    }
+
     public void DropProgressButton()
     {
         GameConstants.levelNumber = 0;
