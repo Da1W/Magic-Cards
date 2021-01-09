@@ -125,7 +125,7 @@ public class Battle : MonoBehaviour
         if (IsAllCellsFull)
         {
             SumScoreOnMap();
-
+            RoundOver();
             return;
         }
 
@@ -135,6 +135,7 @@ public class Battle : MonoBehaviour
         if (playerSlots == null)
         {
             SumScoreOnMap();
+            RoundOver();
             return;
         }
         var botSlots = GetSlotsFromHand(botHand);
@@ -143,6 +144,7 @@ public class Battle : MonoBehaviour
         if (botSlots == null)
         {
             SumScoreOnMap();
+            RoundOver();
             return;
         }
 
@@ -166,8 +168,32 @@ public class Battle : MonoBehaviour
 
     public void RoundOver()
     {
-        Debug.Log("Round Over");
+        if (suitsManager.pack >= 4)
+        {
+            Debug.Log("NextRound");
+            GameConstants.roundNumber += 1;
+            FindObjectOfType<Training>().UpdateRoundNumber();
+            DealAllCards();
+            bot.ReloadPreviewCards();
+            StopAllCoroutines();
+            ClearMap();
+        }
+        else 
+        {
+            Debug.Log("Game over");
+            if (botScore > playerScore)
+                Debug.Log("BOT WIN");
+            else
+                Debug.Log("PLAYER WIN");
+        }
     }
+
+    public void DealAllCards()
+    {
+        DealTheCards(playerHand);
+        DealTheCards(botHand);
+    }
+
     public void MoveCard(GameObject card, GameObject target)
     {
         StartCoroutine(MoveCardCorutine(card, target));

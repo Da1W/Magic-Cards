@@ -23,9 +23,15 @@ public class Training : MonoBehaviour
         if (GameConstants.gameMode == 1)
             levelText.text = "Уровень " + GameConstants.levelNumber;
         else
-            levelText.text = "Раунд " + GameConstants.roundNumber;
+            UpdateRoundNumber();
         //if(GameConstants.levelNumber == 0) helperText.text = GameConstants.welcomeText;
     }
+
+    public void UpdateRoundNumber()
+    {
+        levelText.text = "Раунд " + GameConstants.roundNumber;
+    }
+
     public void Undo()
     {
         var steps = GameConstants.steps;

@@ -159,6 +159,7 @@ public class CellSlot : MonoBehaviour, IDropHandler
 
     public void DropCardFromBot(GameObject card)
     {
+        StartCoroutine(WaitForThink());
         var droppedObject = card.GetComponent<DragAndDrop>();
         card.transform.position = transform.position;
         card.transform.SetParent(transform);
@@ -254,5 +255,6 @@ public class CellSlot : MonoBehaviour, IDropHandler
     private IEnumerator WaitForThink()
     {
         yield return new WaitForSeconds(1f);
+        rightDecimal = 1;
     }
 }

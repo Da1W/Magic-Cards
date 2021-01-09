@@ -29,10 +29,6 @@ public class MenuControls : MonoBehaviour
         GameConstants.levelNumber = 0;
     }
 
-    public void TopicButton()
-    {
-        Application.OpenURL("http://www.mathprofi.ru/zavisimye_sobytija.html");
-    }
     public void ExitButton()
     {
         Application.Quit();
