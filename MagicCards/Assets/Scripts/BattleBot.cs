@@ -9,12 +9,16 @@ public class BattleBot : MonoBehaviour
     public Battle battle;
     private SuitsManager suitsManager;
     public List<GameObject> previewCards;
-    private GameObject[] hidePreviewCards;
+    private List<Vector2> previewCardsPos = new List<Vector2>();
 
     void Start()
     {
         battle = FindObjectOfType<Battle>();
         suitsManager = FindObjectOfType<SuitsManager>();
+        for (var i = 0; i < previewCards.Count; i++)
+        {
+            previewCardsPos.Add(previewCards[i].transform.position);
+        }
     }
 
     // Update is called once per frame
@@ -35,19 +39,21 @@ public class BattleBot : MonoBehaviour
 
             var activePrevCards = previewCards.Where(comp => comp.activeInHierarchy).ToArray();
             var cardToSet = activePrevCards[Random.Range(0, activePrevCards.Length - 1)];
-            SetCard(emptyCells, slots, cardToSet);
+            //StartCoroutine(WaitForThink());
+            StartCoroutine(SetCard(emptyCells, slots, cardToSet));
         }
     }
 
     public void ReloadPreviewCards()
     {
-        foreach (var card in previewCards)
-        {
-            card.SetActive(true);
+        for (var i = 0; i < previewCards.Count; i++)
+        { 
+            previewCards[i].SetActive(true);
+            previewCards[i].transform.position = previewCardsPos[i];
         }
     }
 
-    private void SetCard(CellSlot[] emptyCells, GameObject[] slots, GameObject prevCard)
+    private IEnumerator SetCard(CellSlot[] emptyCells, GameObject[] slots, GameObject prevCard)
     {
         var card = slots[Random.Range(0, slots.Length - 1)].transform.GetChild(0).gameObject;
         var cardProp = card.GetComponent<DragAndDrop>();
@@ -60,6 +66,19 @@ public class BattleBot : MonoBehaviour
         var cellToDrop = emptyCells[Random.Range(0, emptyCells.Length - 1)];
         battle.MoveCard(prevCard, cellToDrop.gameObject);
         cellToDrop.DropCardFromBot(card);
-        prevCard.SetActive(false);
+        StartCoroutine(HideAfterSeconds(prevCard));
+
+        yield return null;
+    }
+
+    private IEnumerator HideAfterSeconds(GameObject card)
+    {
+        yield return new WaitForSeconds(1f);
+        card.SetActive(false);
+    }
+
+    private IEnumerator WaitForThink()
+    {
+        yield return new WaitForSeconds(2f);
     }
 }

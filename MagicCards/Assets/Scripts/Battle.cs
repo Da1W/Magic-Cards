@@ -67,6 +67,7 @@ public class Battle : MonoBehaviour
             DealTheCards(playerHand);
             DealTheCards(botHand);
             bot.ReloadPreviewCards();
+            StopAllCoroutines();
         }
         if (Input.GetKeyDown(KeyCode.C))
             ClearMap();
@@ -128,8 +129,6 @@ public class Battle : MonoBehaviour
             return;
         }
 
-        var IsHandEmpty = true;
-
         var playerSlots = GetSlotsFromHand(playerHand);
         playerSlots.Where(comp => comp.transform.childCount != 0);
 
@@ -169,21 +168,35 @@ public class Battle : MonoBehaviour
     {
         Debug.Log("Round Over");
     }
-
     public void MoveCard(GameObject card, GameObject target)
     {
-        Vector2.MoveTowards(card.transform.position, target.transform.position, 5);
+        StartCoroutine(MoveCardCorutine(card, target));
+    }
+    public IEnumerator MoveCardCorutine(GameObject card, GameObject target)
+    {
+        while (card.transform.position != target.transform.position)
+        {
+            card.transform.position = Vector2.MoveTowards(card.transform.position, 
+                target.transform.position, Time.deltaTime * 5);
+            yield return null;
+        }
     }
 
     public void ClearParadox(GameObject card)
     {
-        var cardsToDelete = playerHand.GetComponentsInChildren<Transform>().Where(comp => comp.gameObject.tag == card.tag).Select(comp => comp.gameObject).ToArray();
+        var cardsToDelete = playerHand.GetComponentsInChildren<Transform>()
+            .Where(comp => comp.gameObject.tag == card.tag)
+            .Select(comp => comp.gameObject)
+            .ToArray();
         for (var i = 0; i < cardsToDelete.Length; i++)
         {
             Destroy(cardsToDelete[i]);
         }
 
-        cardsToDelete = botHand.GetComponentsInChildren<Transform>().Where(comp => comp.gameObject.tag == card.tag).Select(comp => comp.gameObject).ToArray();
+        cardsToDelete = botHand.GetComponentsInChildren<Transform>()
+            .Where(comp => comp.gameObject.tag == card.tag)
+            .Select(comp => comp.gameObject)
+            .ToArray();
         for (var i = 0; i < cardsToDelete.Length; i++)
         {
             Destroy(cardsToDelete[i]);

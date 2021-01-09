@@ -150,6 +150,7 @@ public class CellSlot : MonoBehaviour, IDropHandler
                     eventData.GetComponent<Image>().color = new Color(0.77f, 1f, 0.75f);
                     droppedObject.probability += otherCard.probability;
                     droppedObject.probability /= 2;
+                    WaitForThink();
                     cellSlot.ClearCards();
                 }
             }
@@ -248,5 +249,10 @@ public class CellSlot : MonoBehaviour, IDropHandler
         }
         items.Clear();
         IsCellEmpty = true;
+    }
+
+    private IEnumerator WaitForThink()
+    {
+        yield return new WaitForSeconds(1f);
     }
 }
