@@ -19,6 +19,7 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
     [SerializeField] Sprite ClubPref;
     [SerializeField] Sprite DiamondPref;
     [SerializeField] TextMeshProUGUI ValueText;
+    [SerializeField] GameObject MagicBall;
     [SerializeField] GameObject BetButton;
     [SerializeField] GameObject OppText;
     [SerializeField] GameObject BetText;
@@ -165,10 +166,6 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
         StartTurn();
     }
 
-    public void Update()
-    {
-    }
-
     public void OnEndDrag(PointerEventData eventData)
     {
         if (isCardDown) return;
@@ -183,9 +180,15 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
             draggedCard.transform.position = data.transform.position;
             draggedCard.transform.localScale = new Vector3(3f, 3f, 3f);
             isCardDown = true;
-            CreateCard();
+            CreateCard(); 
             ActivateBetButtons();
+            MagicBall.SetActive(false);
         }
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        if (draggedCard) OnEndDrag(eventData);
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -577,13 +580,4 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
         }
     }
     
-    public void ChangeTurn()
-    {
-
-    }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        if (draggedCard) OnEndDrag(eventData);
-    }
 }
