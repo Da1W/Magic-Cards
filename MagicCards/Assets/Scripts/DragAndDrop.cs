@@ -14,7 +14,7 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
     public Text numerator;
     public Text denominator;
     public GameObject decimLine;
-
+    public string handler;
     public delegate void OnCardDrag();
     public static event OnCardDrag OnCardDragBegin;
     public static event OnCardDrag OnCardDragEnd;
@@ -48,6 +48,10 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
             denominator.text = suitsManager.GetCurrentPack().ToString();
             decimLine.SetActive(true);
         }
+
+        if (GameConstants.gameMode == 2)
+            handler = "player";
+
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 0.7f;
         OnCardDragBegin?.Invoke();

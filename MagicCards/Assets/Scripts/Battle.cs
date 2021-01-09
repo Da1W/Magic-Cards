@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class Battle : MonoBehaviour
@@ -17,14 +19,19 @@ public class Battle : MonoBehaviour
     private int handSize = 4;
     [HideInInspector] public CellSlot[] allCells;
     private SuitsManager suitsManager;
-    private float playerScore;
-    private float botScore;
+    private float playerScore = 0;
+    private float botScore = 0;
+    private BattleBot bot;
+    [SerializeField] Text playerScoreText;
+    [SerializeField] Text botScoreText;
 
     Dictionary<int, GameObject> suits = new Dictionary<int, GameObject>(4);
 
     void Start()
     {
-        if (Random.Range(0, 1) == 0)
+        UpdateScore();
+        GameConstants.roundNumber = 1;
+        if (UnityEngine.Random.Range(0, 2) == 0)
             IsPlayerTurn = true;
         else
             IsPlayerTurn = false;
@@ -34,10 +41,22 @@ public class Battle : MonoBehaviour
         suits.Add(2, diamondPref);
         suits.Add(3, spadePref);
 
-        allCells = GameObject.FindGameObjectsWithTag("Cell").Select(comp => comp.GetComponent<CellSlot>()).Where(comp => comp != null).ToArray();
+        allCells = GameObject.FindGameObjectsWithTag("Cell")
+            .Select(comp => comp.GetComponent<CellSlot>())
+            .Where(comp => comp != null).ToArray();
+
         suitsManager = FindObjectOfType<SuitsManager>();
+        bot = FindObjectOfType<BattleBot>();
 
         GameConstants.gameMode = 2;
+    }
+
+    private void UpdateScore()
+    {
+        playerScore = (float)Math.Round(playerScore, 3);
+        botScore = (float)Math.Round(botScore, 3);
+        playerScoreText.text = $"Вы: {playerScore}  очков";
+        botScoreText.text = $"Противник: {botScore} очков";
     }
 
     // Update is called once per frame
@@ -47,6 +66,7 @@ public class Battle : MonoBehaviour
         {
             DealTheCards(playerHand);
             DealTheCards(botHand);
+            bot.ReloadPreviewCards();
         }
         if (Input.GetKeyDown(KeyCode.C))
             ClearMap();
@@ -57,11 +77,10 @@ public class Battle : MonoBehaviour
         foreach (var cell in allCells)
             cell.ClearCards();
     }
+
     void DealTheCards(GameObject hand)
     {
-        GameObject[] slots = new GameObject[handSize];
-
-        slots = hand.GetComponentsInChildren<Transform>().Where(comp => comp.gameObject.tag == "Slot").Select(comp => comp.gameObject).ToArray();
+        var slots = GetSlotsFromHand(hand);
 
         for (int i = 0; i < handSize; i++)
         {
@@ -74,19 +93,89 @@ public class Battle : MonoBehaviour
         }
     }
 
+    private GameObject[] GetSlotsFromHand(GameObject hand)
+    {
+        GameObject[] slots = new GameObject[handSize];
+
+        slots = hand.GetComponentsInChildren<Transform>()
+            .Where(comp => comp.gameObject.tag == "Slot")
+            .Select(comp => comp.gameObject).ToArray();
+
+        return slots;
+    }
+
     private GameObject GetRandomCard()
     {
-        var card = suits[Random.Range(0, 4)];
+        var card = suits[UnityEngine.Random.Range(0, 4)];
 
-        if (suitsManager.suits[card.tag] == 1)
+        if (suitsManager.suits[card.tag] == 0)
             return GetRandomCard();
 
         return card;
     }
 
+    public void CheckEndOfTurns()
+    {
+        var IsAllCellsFull = true;
+
+        foreach (var cell in allCells)
+            if (cell.IsCellEmpty) IsAllCellsFull = false;
+
+        if (IsAllCellsFull)
+        {
+            SumScoreOnMap();
+
+            return;
+        }
+
+        var IsHandEmpty = true;
+
+        var playerSlots = GetSlotsFromHand(playerHand);
+        playerSlots.Where(comp => comp.transform.childCount != 0);
+
+        if (playerSlots == null)
+        {
+            SumScoreOnMap();
+            return;
+        }
+        var botSlots = GetSlotsFromHand(botHand);
+        botSlots.Where(comp => comp.transform.childCount != 0);
+
+        if (botSlots == null)
+        {
+            SumScoreOnMap();
+            return;
+        }
+
+    }
+
+    private void SumScoreOnMap()
+    {
+        foreach (var cell in allCells)
+        {
+            var cardInCell = cell.items[0].GetComponent<DragAndDrop>();
+            if (cardInCell != null)
+            {
+                if (cardInCell.handler == "bot")
+                    botScore += (float)cardInCell.probability;
+                else
+                    playerScore += (float)cardInCell.probability;
+            }
+        }
+        UpdateScore();
+    }
+
     public void RoundOver()
     {
         Debug.Log("Round Over");
+    }
+
+    public void MoveCard(GameObject card, GameObject target)
+    {
+        while (card.transform.position != target.transform.position)
+        { 
+        Vector2.MoveTowards(card.transform.position, target.transform.position, 5);
+        }
     }
 
     public void ClearParadox(GameObject card)

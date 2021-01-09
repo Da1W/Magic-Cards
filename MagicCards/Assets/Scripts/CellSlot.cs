@@ -24,6 +24,7 @@ public class CellSlot : MonoBehaviour, IDropHandler
     private GameObject cellSlotFake;
     private GameObject[] cellSlotFakes;
     private Battle battle;
+    public CellSlot[] neighbours;
 
     void Start()
     {
@@ -44,7 +45,9 @@ public class CellSlot : MonoBehaviour, IDropHandler
         cellSlotFake = GameObject.Find("CellSlotFake");
 
         var ChildsTransforms = GetComponentsInChildren<Transform>();
-        cellSlotFakes = ChildsTransforms.Where(comp => comp.gameObject.tag == "CellSlotFake").Select(comp => comp.gameObject).ToArray();
+        cellSlotFakes = ChildsTransforms
+            .Where(comp => comp.gameObject.tag == "CellSlotFake")
+            .Select(comp => comp.gameObject).ToArray();
         //decimalsText = new List<Text>();
         //decimalsText.Add(decimals1);
         //decimalsText.Add(decimals2);
@@ -71,7 +74,8 @@ public class CellSlot : MonoBehaviour, IDropHandler
     {
         var droppedObject = eventData.pointerDrag.GetComponent<DragAndDrop>();
 
-        if (eventData.pointerDrag != null && items.Count < trainingManager.maxCardsInCells && !items.Contains(eventData.pointerDrag))
+        if (eventData.pointerDrag != null && items.Count < trainingManager.maxCardsInCells 
+            && !items.Contains(eventData.pointerDrag))
         {
             eventData.pointerDrag.transform.position = transform.position;
             eventData.pointerDrag.transform.SetParent(transform);
@@ -95,6 +99,8 @@ public class CellSlot : MonoBehaviour, IDropHandler
             {
                 battle.IsPlayerTurn = !battle.IsPlayerTurn;
                 IsCellEmpty = false;
+                battle.CheckEndOfTurns();
+                Merge(eventData.pointerDrag, droppedObject);
             }
 
             eventData.pointerDrag.GetComponent<RectTransform>().sizeDelta =
@@ -132,6 +138,24 @@ public class CellSlot : MonoBehaviour, IDropHandler
         }
     }
 
+    private void Merge(GameObject eventData, DragAndDrop droppedObject)
+    {
+        foreach (var cellSlot in neighbours)
+        {
+            if (cellSlot.items.Count != 0 && cellSlot.items[0].tag == eventData.tag)
+            {
+                var otherCard = cellSlot.items[0].GetComponent<DragAndDrop>();
+                if (otherCard.handler != droppedObject.handler)
+                {
+                    eventData.GetComponent<Image>().color = new Color(0.77f, 1f, 0.75f);
+                    droppedObject.probability += otherCard.probability;
+                    droppedObject.probability /= 2;
+                    cellSlot.ClearCards();
+                }
+            }
+        }
+    }
+
     public void DropCardFromBot(GameObject card)
     {
         var droppedObject = card.GetComponent<DragAndDrop>();
@@ -150,8 +174,11 @@ public class CellSlot : MonoBehaviour, IDropHandler
             cellSlotFake.GetComponent<RectTransform>().sizeDelta;
         SetCorrectPositions();
 
+        Merge(card, droppedObject);
         if (int.Parse(droppedObject.numerator.text) == 1)
             battle.ClearParadox(card);
+
+        battle.CheckEndOfTurns();
     }
     public void CheckWin()
     {

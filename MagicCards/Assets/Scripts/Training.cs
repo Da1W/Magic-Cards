@@ -20,7 +20,10 @@ public class Training : MonoBehaviour
     {
         CellSlotsOnMap = FindObjectsOfType<CellSlot>();
         stepsCount.text = "Количество ходов: 0";
-        levelText.text = "Уровень " + GameConstants.levelNumber;
+        if (GameConstants.gameMode == 1)
+            levelText.text = "Уровень " + GameConstants.levelNumber;
+        else
+            levelText.text = "Раунд " + GameConstants.roundNumber;
         //if(GameConstants.levelNumber == 0) helperText.text = GameConstants.welcomeText;
     }
     public void Undo()
