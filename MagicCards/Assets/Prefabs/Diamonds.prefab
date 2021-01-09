@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 2226015955964305755}
   m_Layer: 5
   m_Name: Diamonds
-  m_TagString: Untagged
+  m_TagString: diamond
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

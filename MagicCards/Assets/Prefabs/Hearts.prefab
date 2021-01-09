@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 995955680474764997}
   m_Layer: 5
   m_Name: Hearts
-  m_TagString: Untagged
+  m_TagString: heart
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -94,9 +94,11 @@ MonoBehaviour:
   cellSlot: {fileID: 0}
   probability: 0
   suitsManager: {fileID: 0}
+  startPosition: {fileID: 0}
   numerator: {fileID: 4423286822437090395}
   denominator: {fileID: 3070859562695301592}
   decimLine: {fileID: 3528042022016907772}
+  handler: 
 --- !u!225 &995955680474764997
 CanvasGroup:
   m_ObjectHideFlags: 0

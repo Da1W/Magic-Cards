@@ -1936,7 +1936,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1152720394}
         m_TargetAssemblyTypeName: MenuControls, Assembly-CSharp
-        m_MethodName: PlayButton
+        m_MethodName: PlayBattleButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5007,7 +5007,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 8.004517, y: 20.536133}
+  m_AnchoredPosition: {x: 8.004395, y: 20.536133}
   m_SizeDelta: {x: -524.96655, y: -0.00030517578}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1526099754

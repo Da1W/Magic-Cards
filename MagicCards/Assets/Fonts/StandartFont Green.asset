@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
   m_Name: StandartFont Green
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   hashCode: -1303565245
   material: {fileID: 54237465411697074}
   materialHashCode: 760871299
@@ -1063,6 +1063,62 @@ MonoBehaviour:
       m_Height: 42
     m_Scale: 1
     m_AtlasIndex: 0
+  - m_Index: 42
+    m_Metrics:
+      m_Width: 50.546875
+      m_Height: 63.71875
+      m_HorizontalBearingX: 4.828125
+      m_HorizontalBearingY: 63.28125
+      m_HorizontalAdvance: 61.75
+    m_GlyphRect:
+      m_X: 692
+      m_Y: 161
+      m_Width: 52
+      m_Height: 65
+    m_Scale: 1
+    m_AtlasIndex: 0
+  - m_Index: 25
+    m_Metrics:
+      m_Width: 45.703125
+      m_Height: 65.171875
+      m_HorizontalBearingX: 4.828125
+      m_HorizontalBearingY: 64.734375
+      m_HorizontalAdvance: 54.9375
+    m_GlyphRect:
+      m_X: 763
+      m_Y: 241
+      m_Width: 47
+      m_Height: 66
+    m_Scale: 1
+    m_AtlasIndex: 0
+  - m_Index: 26
+    m_Metrics:
+      m_Width: 42.640625
+      m_Height: 62.84375
+      m_HorizontalBearingX: 4.828125
+      m_HorizontalBearingY: 62.84375
+      m_HorizontalAdvance: 49.875
+    m_GlyphRect:
+      m_X: 627
+      m_Y: 178
+      m_Width: 44
+      m_Height: 63
+    m_Scale: 1
+    m_AtlasIndex: 0
+  - m_Index: 27
+    m_Metrics:
+      m_Width: 45.703125
+      m_Height: 63.890625
+      m_HorizontalBearingX: 4.828125
+      m_HorizontalBearingY: 63.453125
+      m_HorizontalAdvance: 55.375
+    m_GlyphRect:
+      m_X: 690
+      m_Y: 245
+      m_Width: 47
+      m_Height: 65
+    m_Scale: 1
+    m_AtlasIndex: 0
   m_CharacterTable:
   - m_ElementType: 1
     m_Unicode: 32
@@ -1355,6 +1411,22 @@ MonoBehaviour:
   - m_ElementType: 1
     m_Unicode: 62
     m_GlyphIndex: 33
+    m_Scale: 1
+  - m_ElementType: 1
+    m_Unicode: 71
+    m_GlyphIndex: 42
+    m_Scale: 1
+  - m_ElementType: 1
+    m_Unicode: 54
+    m_GlyphIndex: 25
+    m_Scale: 1
+  - m_ElementType: 1
+    m_Unicode: 55
+    m_GlyphIndex: 26
+    m_Scale: 1
+  - m_ElementType: 1
+    m_Unicode: 56
+    m_GlyphIndex: 27
     m_Scale: 1
   m_AtlasTextures:
   - {fileID: 7259839092146550600}
@@ -1818,10 +1890,6 @@ MonoBehaviour:
     m_Y: 297
     m_Width: 1
     m_Height: 726
-  - m_X: 447
-    m_Y: 314
-    m_Width: 576
-    m_Height: 709
   - m_X: 307
     m_Y: 303
     m_Width: 80
@@ -1899,7 +1967,7 @@ MonoBehaviour:
     m_Width: 8
     m_Height: 773
   m_fontInfo:
-    Name: 
+    Name:
     PointSize: 0
     Scale: 0
     CharacterCount: 0
@@ -1933,7 +2001,7 @@ MonoBehaviour:
   fallbackFontAssets: []
   m_FallbackFontAssetTable: []
   m_CreationSettings:
-    sourceFontFileName: 
+    sourceFontFileName:
     sourceFontFileGUID: ab7afc3333a841143b86b17f69083ab2
     pointSizeSamplingMode: 0
     pointSize: 90
@@ -1942,9 +2010,9 @@ MonoBehaviour:
     atlasWidth: 1024
     atlasHeight: 1024
     characterSetSelectionMode: 7
-    characterSequence: 
-    referencedFontAssetGUID: 
-    referencedTextAssetGUID: 
+    characterSequence:
+    referencedFontAssetGUID:
+    referencedTextAssetGUID:
     fontStyle: 0
     fontStyleModifier: 0
     renderMode: 4165
@@ -1986,7 +2054,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: sansation-light_[allfont.ru] Atlas Material
   m_Shader: {fileID: 4800000, guid: 68e6db2ebdc24f95958faec2be5558d6, type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -2124,4 +2192,4 @@ Texture2D:
     serializedVersion: 2
     offset: 0
     size: 0
-    path: 
+    path:

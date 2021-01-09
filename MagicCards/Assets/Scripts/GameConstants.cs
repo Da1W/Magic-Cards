@@ -8,7 +8,7 @@ public static class GameConstants
     public static Stack<CellSlot> usedCellSlots;
     public static int gameMode;
     public static int levelNumber;
+    public static int roundNumber;
     public static string playerName;
     public static string welcomeText;
-    
 }

@@ -15,7 +15,13 @@ public class MenuControls : MonoBehaviour
         //    " Давай ознакомимся с правилами игры. (Нажми на меня чтобы продолжить)", userName); 
         GameConstants.gameMode = 1;
         
-          SceneManager.LoadSceneAsync("Level" + GameConstants.levelNumber);
+        SceneManager.LoadSceneAsync("Level" + GameConstants.levelNumber);
+    }
+
+    public void PlayBattleButton()
+    {
+        GameConstants.gameMode = 2;
+        SceneManager.LoadSceneAsync("Battle");
     }
 
     public void DropProgressButton()
@@ -23,10 +29,6 @@ public class MenuControls : MonoBehaviour
         GameConstants.levelNumber = 0;
     }
 
-    public void TopicButton()
-    {
-        Application.OpenURL("http://www.mathprofi.ru/zavisimye_sobytija.html");
-    }
     public void ExitButton()
     {
         Application.Quit();

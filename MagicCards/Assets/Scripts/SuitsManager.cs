@@ -7,7 +7,7 @@ public class SuitsManager : MonoBehaviour
 {
     //spades, hearts, clubs, and diamonds
 
-    Dictionary<string, int> suits = new Dictionary<string, int>();
+    [HideInInspector] public Dictionary<string, int> suits = new Dictionary<string, int>();
     public int pack;
 
     public Text packText;
