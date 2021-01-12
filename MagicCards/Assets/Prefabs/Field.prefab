@@ -176,7 +176,8 @@ MonoBehaviour:
   rightDecimal: 1
   rightFill: {fileID: 8111960083736363080}
   trainingManager: {fileID: 0}
-  cellSlotFakes: []
+  IsCellEmpty: 1
+  neighbours: []
 --- !u!1 &8060492482710622229
 GameObject:
   m_ObjectHideFlags: 0
@@ -368,8 +369,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.99502563, y: -0.85998535}
-  m_SizeDelta: {x: -10.550035, y: -22.76001}
+  m_AnchoredPosition: {x: 0.05999756, y: -0.6000061}
+  m_SizeDelta: {x: -7.4007263, y: -12.78717}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8111960083736363079
 CanvasRenderer:

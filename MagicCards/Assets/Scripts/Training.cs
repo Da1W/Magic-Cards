@@ -71,6 +71,7 @@ public class Training : MonoBehaviour
         {
             obj.SetActive(true);
         }
+        if (GameConstants.levelNumber == 5) GameConstants.isModesAvailable = true;
     }
     public void CloseCorrect()
     {
@@ -100,5 +101,10 @@ public class Training : MonoBehaviour
     {
         steps++;
         stepsCount.text = "Количество ходов: " + steps.ToString();
+    }
+
+    public void ToMenuAndShowChoose()
+    {
+        SceneChanger.ToChooseModeScene();
     }
 }

@@ -452,7 +452,7 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
         WinText.SetActive(false);
         Field.GetComponent<Image>().color = new Color(0.6f, 0.6f, 1f);
         OffUnableButtons();
-        if (DECK.higher10 + DECK.lower10 + DECK.equal10 == 1) EndGame();
+        if (EndGameCondition()) EndGame();
         isCardDown = false;
         
         valueRate = 1f;
@@ -571,9 +571,13 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
     private bool EndGameCondition()
     {
         var variantCount = 7;
-        // if (DECK.count == 1) 
-        return true;
-
+        if (DECK.equal10 == 0) variantCount--;
+        if (DECK.lower10 == 0) variantCount--;
+        if (DECK.higher10 == 0) variantCount--;
+        if (DECK.spades == 0) variantCount--;
+        if (DECK.hearts == 0) variantCount--;
+        if (DECK.clubs == 0) variantCount--;
+        if (DECK.diamonds == 0) variantCount--;
+        return variantCount <= 2;
     }
-    
 }

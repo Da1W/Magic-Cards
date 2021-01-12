@@ -11,4 +11,5 @@ public static class GameConstants
     public static int roundNumber;
     public static string playerName;
     public static string welcomeText;
+    public static bool isModesAvailable = false; 
 }

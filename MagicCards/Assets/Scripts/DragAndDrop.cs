@@ -105,7 +105,7 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
             suitsManager.UpdadeSuits(this.gameObject, 1);
             cellSlot.SetCorrectPositions();
             cellSlot.CheckWin();
-            cellSlot.trainingManager.PlusStep();
+            //cellSlot.trainingManager.PlusStep();
         }
         Destroy(gameObject);
     }

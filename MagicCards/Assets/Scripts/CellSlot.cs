@@ -116,7 +116,7 @@ public class CellSlot : MonoBehaviour, IDropHandler
             CheckWin();
             GameConstants.usedCellSlots.Push(this);
             GameConstants.steps.Push("Insert");
-            trainingManager.PlusStep();
+            //trainingManager.PlusStep();
         }
         else if (items.Contains(eventData.pointerDrag))
         {

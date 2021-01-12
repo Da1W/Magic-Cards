@@ -32,4 +32,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ForeCasterBattle.unity
     guid: 415a3e6233a16be41aa86628c627faf2
+  - enabled: 1
+    path: Assets/Scenes/ChooseMode.unity
+    guid: 35b36ac51770cbf4fa13538c000d6268
   m_configObjects: {}
