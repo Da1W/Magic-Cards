@@ -185,12 +185,14 @@ public class Battle : MonoBehaviour
         {
             if (playerScore <= botScore)
             {
-                LoseTable.GetComponentInChildren<TextMeshProUGUI>().text = $"Вы проиграли\nВаш Счет:\n{playerScore}\nСчет Противника:\n{botScore}";
+                LoseTable.GetComponentsInChildren<TextMeshProUGUI>().Where(comp => comp.name == "OppScore").Last().text = $"Счет Противника:\n{botScore}";
+                LoseTable.GetComponentsInChildren<TextMeshProUGUI>().Where(comp => comp.name == "PlayerScore").Last().text = $"Ваш Счет:\n{playerScore}";
                 LoseTable.SetActive(true);
             }
             else
             {
-                WinTable.GetComponentInChildren<TextMeshProUGUI>().text = $"Вы Выиграли\nВаш Счет:\n{playerScore}\nСчет Противника:\n{botScore}";
+                WinTable.GetComponentsInChildren<TextMeshProUGUI>().Where(comp => comp.name == "PlayerScore").Last().text = $"Ваш Счет:\n{playerScore}";
+                WinTable.GetComponentsInChildren<TextMeshProUGUI>().Where(comp => comp.name == "OppScore").Last().text = $"Счет Противника:\n{botScore}";
                 WinTable.SetActive(true);
             }
         }

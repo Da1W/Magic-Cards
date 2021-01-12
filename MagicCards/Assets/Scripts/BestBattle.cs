@@ -50,6 +50,7 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
     private int OppBetValue;
     private Card.Suits OppBetSuit;
     private float rate;
+    private float winChance;
     private Button currentSuitButton;
     private Button currentValueButton;
 
@@ -60,7 +61,11 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
         {
             rate = (float)Math.Round(value, 2);
             BetText.GetComponent<TextMeshProUGUI>().text = rate.ToString();
-            if (rate != 1) WinChanceText.text = Math.Round(Mathf.Pow(rate, -1) * 100, 2) + "%";
+            if (rate != 1)
+            {
+                winChance = (float)Math.Round(Mathf.Pow(rate, -1), 2);
+                WinChanceText.text = Math.Round(Mathf.Pow(rate, -1) * 100, 2) + "%";
+            }
             else WinChanceText.text = "0%";
         }
     }
@@ -115,7 +120,7 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
 
     class Deck
     {
-        public List<Card> cards;
+        public List<Card> cards { get; private set; }
         public int count => cards.Count;
         public float spadesChance => (float)spades / count;
         public float heartsChance => (float)hearts / count;
@@ -301,7 +306,6 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
 
     public void BetToSpade()
     {
-        if (DECK.spades == 0) return;
         Rate = valueRate;
         betSuit = Card.Suits.Spade;
         suitRate = 1f / DECK.spadesChance;
@@ -310,7 +314,6 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
     }
     public void BetToHeart()
     {
-        if (DECK.hearts == 0) return;
         Rate = valueRate;
         betSuit = Card.Suits.Heart;
         suitRate = 1f / DECK.heartsChance;
@@ -319,7 +322,6 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
     }
     public void BetToClub()
     {
-        if (DECK.clubs == 0) return;
         Rate = valueRate;
         betSuit = Card.Suits.Club;
         suitRate = 1f / DECK.clubsChance;
@@ -328,7 +330,6 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
     }
     public void BetToDiamond()
     {
-        if (DECK.diamonds == 0) return;
         Rate = valueRate;
         betSuit = Card.Suits.Diamond;
         suitRate = 1f / DECK.diamondsChance;
@@ -337,11 +338,6 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
     }
     public void BetTo10()
     {
-        if (DECK.equal10 == 0)
-        {
-            Rate = suitRate;
-            return;
-        }
         Rate = suitRate;
         betValue = 10;
         valueRate = 1f/DECK.equal10Chance;
@@ -349,11 +345,6 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
     }
     public void BetToLower10()
     {
-        if (DECK.lower10 == 0)
-        {
-            Rate = suitRate;
-            return;
-        }
         Rate = suitRate;
         betValue = 9;
         valueRate = 1f/DECK.lower10Chance;
@@ -362,11 +353,6 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
 
     public void BetToHigher10()
     {
-        if (DECK.higher10 == 0)
-        {
-            Rate = suitRate;
-            return;
-        }
         Rate = suitRate;
         betValue = 11;
         valueRate = 1f/DECK.higher10Chance;
@@ -570,14 +556,24 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
     {
         if(Score <= OppScore)
         {
-            LoseTable.GetComponentInChildren<TextMeshProUGUI>().text = $"Вы проиграли\nВаш Счет:\n{Score}\nСчет Противника:\n{OppScore}";
+            LoseTable.GetComponentsInChildren<TextMeshProUGUI>().Where(comp => comp.name == "OppScore").Last().text = $"Счет Противника:\n{OppScore}";
+            LoseTable.GetComponentsInChildren<TextMeshProUGUI>().Where(comp => comp.name == "PlayerScore").Last().text = $"Ваш Счет:\n{Score}";
             LoseTable.SetActive(true);
         }
         else
         {
-            WinTable.GetComponentInChildren<TextMeshProUGUI>().text = $"Вы Выиграли\nВаш Счет:\n{Score}\nСчет Противника:\n{OppScore}";
+            WinTable.GetComponentsInChildren<TextMeshProUGUI>().Where(comp => comp.name == "PlayerScore").Last().text = $"Ваш Счет:\n{Score}";
+            WinTable.GetComponentsInChildren<TextMeshProUGUI>().Where(comp => comp.name == "OppScore").Last().text = $"Счет Противника:\n{OppScore}";
             WinTable.SetActive(true);
         }
+    }
+
+    private bool EndGameCondition()
+    {
+        var variantCount = 7;
+        // if (DECK.count == 1) 
+        return true;
+
     }
     
 }
