@@ -15,7 +15,7 @@ public class Battle : MonoBehaviour
     public GameObject clubPref;
     public GameObject diamondPref;
     public GameObject spadePref;
-    public bool IsPlayerTurn;
+    public static bool IsPlayerTurn;
 
     private int handSize = 4;
     [HideInInspector] public CellSlot[] allCells;
@@ -70,7 +70,7 @@ public class Battle : MonoBehaviour
             DealTheCards(playerHand);
             DealTheCards(botHand);
             bot.ReloadPreviewCards();
-            StopAllCoroutines();
+            //StopAllCoroutines();
         }
         if (Input.GetKeyDown(KeyCode.C))
             ClearMap();
@@ -128,7 +128,7 @@ public class Battle : MonoBehaviour
         if (IsAllCellsFull)
         {
             SumScoreOnMap();
-            RoundOver();
+            Invoke(nameof(RoundOver), 2f);
             return;
         }
 
@@ -138,7 +138,7 @@ public class Battle : MonoBehaviour
         if (playerSlots == null)
         {
             SumScoreOnMap();
-            RoundOver();
+            Invoke(nameof(RoundOver), 2f);
             return;
         }
         var botSlots = GetSlotsFromHand(botHand);
@@ -147,7 +147,7 @@ public class Battle : MonoBehaviour
         if (botSlots == null)
         {
             SumScoreOnMap();
-            RoundOver();
+            Invoke(nameof(RoundOver), 2f);
             return;
         }
 
@@ -177,9 +177,7 @@ public class Battle : MonoBehaviour
             Debug.Log("NextRound");
             GameConstants.roundNumber += 1;
             FindObjectOfType<Training>().UpdateRoundNumber();
-            DealAllCards();
-            bot.ReloadPreviewCards();
-            ClearMap();
+            StartGame();
         }
         else 
         {
@@ -196,6 +194,14 @@ public class Battle : MonoBehaviour
                 WinTable.SetActive(true);
             }
         }
+    }
+
+    public void StartGame()
+    {
+        DealAllCards();
+        bot.ReloadPreviewCards();
+        ClearMap();
+        if (!IsPlayerTurn) bot.BotTurn();
     }
 
     public void DealAllCards()

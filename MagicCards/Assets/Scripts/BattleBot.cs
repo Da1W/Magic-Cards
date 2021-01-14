@@ -10,6 +10,12 @@ public class BattleBot : MonoBehaviour
     private SuitsManager suitsManager;
     public List<GameObject> previewCards;
     private List<Vector2> previewCardsPos = new List<Vector2>();
+    public static BattleBot singleton;
+
+    void Awake()
+    {
+        singleton = this;
+    }
 
     void Start()
     {
@@ -21,11 +27,8 @@ public class BattleBot : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void BotTurn()
     {
-        if (!battle.IsPlayerTurn)
-        {
             var emptyCells = battle.allCells.Where(comp => comp.IsCellEmpty).ToArray();
 
             var slots = hand.GetComponentsInChildren<Transform>()
@@ -41,7 +44,6 @@ public class BattleBot : MonoBehaviour
             var cardToSet = activePrevCards[Random.Range(0, activePrevCards.Length - 1)];
             //StartCoroutine(WaitForThink());
             SetCard(emptyCells, slots, cardToSet);
-        }
     }
 
     public void ReloadPreviewCards()
@@ -65,7 +67,7 @@ public class BattleBot : MonoBehaviour
         cardProp.decimLine.SetActive(true);
         var cellToDrop = emptyCells[Random.Range(0, emptyCells.Length - 1)];
         battle.MoveCard(prevCard, cellToDrop.gameObject);
-        cellToDrop.DropCardFromBot(card);
+        cellToDrop.StartCoroutine(cellToDrop.DropCardFromBot(card));
         StartCoroutine(HideAfterSeconds(prevCard));
     }
 
@@ -73,10 +75,5 @@ public class BattleBot : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
         card.SetActive(false);
-    }
-
-    private IEnumerator WaitForThink()
-    {
-        yield return new WaitForSeconds(2f);
     }
 }

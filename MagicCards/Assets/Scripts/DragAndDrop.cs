@@ -40,11 +40,17 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
-        startPosition = gameObject.transform;
-        if (cellSlot == null)
+        if (!Battle.IsPlayerTurn || IsInCell)
         {
-            probability = suitsManager.CalculateProbability(this.gameObject);
-            numerator.text = suitsManager.GetCurrentSuit(this.gameObject).ToString();
+            eventData.Reset();
+            return;
+        }
+
+        startPosition = gameObject.transform;
+        if (!IsInCell)
+        {
+            probability = suitsManager.CalculateProbability(gameObject);
+            numerator.text = suitsManager.GetCurrentSuit(gameObject).ToString();
             denominator.text = suitsManager.GetCurrentPack().ToString();
             decimLine.SetActive(true);
         }

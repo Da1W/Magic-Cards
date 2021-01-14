@@ -767,11 +767,11 @@ RectTransform:
   m_Children:
   - {fileID: 798066584}
   m_Father: {fileID: 1461284605}
-  m_RootOrder: 6
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 820.9999, y: 420.99994}
+  m_AnchoredPosition: {x: -83, y: -63}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &339537606
@@ -850,7 +850,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 519420037}
         m_TargetAssemblyTypeName: Battle, Assembly-CSharp
-        m_MethodName: DealAllCards
+        m_MethodName: StartGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1617,7 +1617,6 @@ MonoBehaviour:
   clubPref: {fileID: 82323734019601810, guid: b44b34a5bd1299f4cb188adcd8087551, type: 3}
   diamondPref: {fileID: 2226015955964305750, guid: de0162cf383c5da4f82cc3ee0b74ac7d, type: 3}
   spadePref: {fileID: 3416996248976655801, guid: 857ced3b0f086e84290b2fb6dc5f9504, type: 3}
-  IsPlayerTurn: 0
   allCells: []
   playerScoreText: {fileID: 1337886170}
   botScoreText: {fileID: 1988929264}
@@ -2166,7 +2165,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1461284605}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4122,7 +4121,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1461284605}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -5798,7 +5797,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1461284605
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5814,9 +5813,9 @@ RectTransform:
   - {fileID: 1855180454}
   - {fileID: 980580339}
   - {fileID: 1955418538}
+  - {fileID: 339537605}
   - {fileID: 1026410838}
   - {fileID: 625435373}
-  - {fileID: 339537605}
   m_Father: {fileID: 1795331569}
   m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

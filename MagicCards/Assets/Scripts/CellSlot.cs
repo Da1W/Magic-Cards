@@ -25,6 +25,12 @@ public class CellSlot : MonoBehaviour, IDropHandler
     private GameObject[] cellSlotFakes;
     private Battle battle;
     public CellSlot[] neighbours;
+    public CellSlot singleton;
+
+    void Awake()
+    {
+        singleton = this;
+    }
 
     void Start()
     {
@@ -97,10 +103,11 @@ public class CellSlot : MonoBehaviour, IDropHandler
 
             if (GameConstants.gameMode == 2)
             {
-                battle.IsPlayerTurn = !battle.IsPlayerTurn;
+                Battle.IsPlayerTurn = false;
                 IsCellEmpty = false;
                 battle.CheckEndOfTurns();
                 Merge(eventData.pointerDrag, droppedObject);
+                BattleBot.singleton.BotTurn();
             }
 
             eventData.pointerDrag.GetComponent<RectTransform>().sizeDelta =
@@ -157,9 +164,9 @@ public class CellSlot : MonoBehaviour, IDropHandler
         }
     }
 
-    public void DropCardFromBot(GameObject card)
+    public IEnumerator DropCardFromBot(GameObject card)
     {
-        StartCoroutine(WaitForThink());
+        yield return new WaitForSeconds(2f);
         var droppedObject = card.GetComponent<DragAndDrop>();
         card.transform.position = transform.position;
         card.transform.SetParent(transform);
@@ -169,7 +176,7 @@ public class CellSlot : MonoBehaviour, IDropHandler
         droppedObject.IsInCell = true;
         items.Add(card);
 
-        battle.IsPlayerTurn = !battle.IsPlayerTurn;
+        Battle.IsPlayerTurn = true;
         IsCellEmpty = false;
 
         card.GetComponent<RectTransform>().sizeDelta =
