@@ -105,20 +105,17 @@ public class CellSlot : MonoBehaviour, IDropHandler
             {
                 Battle.IsPlayerTurn = false;
                 IsCellEmpty = false;
-                battle.CheckEndOfTurns();
-                Merge(eventData.pointerDrag, droppedObject);
-                BattleBot.singleton.BotTurn();
+                CheckMerge(droppedObject);
+                //battle.CheckEndOfTurns();
+                if (int.Parse(droppedObject.numerator.text) == 1)
+                    battle.ClearParadox(eventData.pointerDrag);
+
+                //BattleBot.singleton.BotTurn();
             }
 
             eventData.pointerDrag.GetComponent<RectTransform>().sizeDelta =
                 cellSlotFake.GetComponent<RectTransform>().sizeDelta;
             SetCorrectPositions();
-
-            if (GameConstants.gameMode == 2)
-            {
-                if (int.Parse(droppedObject.numerator.text) == 1)
-                    battle.ClearParadox(eventData.pointerDrag);
-            }
 
             CheckWin();
             GameConstants.usedCellSlots.Push(this);
@@ -145,35 +142,55 @@ public class CellSlot : MonoBehaviour, IDropHandler
         }
     }
 
-    private void Merge(GameObject eventData, DragAndDrop droppedObject)
+    private void CheckMerge(DragAndDrop droppedObject)
     {
+        var IsMerge = false;
         foreach (var cellSlot in neighbours)
         {
-            if (cellSlot.items.Count != 0 && cellSlot.items[0].tag == eventData.tag)
+            if (cellSlot.items.Count != 0 && cellSlot.items[0].tag == droppedObject.gameObject.tag)
             {
                 var otherCard = cellSlot.items[0].GetComponent<DragAndDrop>();
                 if (otherCard.handler != droppedObject.handler)
                 {
-                    eventData.GetComponent<Image>().color = new Color(0.77f, 1f, 0.75f);
-                    droppedObject.probability += otherCard.probability;
-                    droppedObject.probability /= 2;
-                    WaitForThink();
-                    cellSlot.ClearCards();
+                    IsMerge = true;
+                    StartCoroutine(Merge(droppedObject, otherCard,  cellSlot));
                 }
             }
         }
+        if (!IsMerge)
+        {
+            battle.CheckEndOfTurns();
+            if (droppedObject.handler == "player") BattleBot.singleton.BotTurn();
+        }
+    }
+
+    private IEnumerator Merge(DragAndDrop droppedObject, DragAndDrop otherCard, CellSlot cellSlot)
+    {
+        battle.MoveCard(otherCard.gameObject, droppedObject.gameObject);
+        yield return new WaitForSeconds(2f);
+        battle.StopAllCoroutines();
+        if (droppedObject != null)
+        {
+            droppedObject.gameObject.GetComponent<Image>().color = new Color(0.77f, 1f, 0.75f);
+            droppedObject.probability += otherCard.probability;
+            droppedObject.probability /= 2;
+            cellSlot.ClearCards();
+        }
+        battle.CheckEndOfTurns();
+        if (droppedObject.handler == "player") BattleBot.singleton.BotTurn();
     }
 
     public IEnumerator DropCardFromBot(GameObject card)
     {
-        yield return new WaitForSeconds(2f);
-        var droppedObject = card.GetComponent<DragAndDrop>();
+        yield return new WaitForSeconds(1f);
+        var droppedCard = card.GetComponent<DragAndDrop>();
+        droppedCard.SendEndDragEvent();
+        droppedCard.canvasGroup.blocksRaycasts = false;
         card.transform.position = transform.position;
         card.transform.SetParent(transform);
         suitsManager.UpdadeSuits(card, -1);
-
-        droppedObject.cellSlot = this;
-        droppedObject.IsInCell = true;
+        droppedCard.cellSlot = this;
+        droppedCard.IsInCell = true;
         items.Add(card);
 
         Battle.IsPlayerTurn = true;
@@ -183,11 +200,11 @@ public class CellSlot : MonoBehaviour, IDropHandler
             cellSlotFake.GetComponent<RectTransform>().sizeDelta;
         SetCorrectPositions();
 
-        Merge(card, droppedObject);
-        if (int.Parse(droppedObject.numerator.text) == 1)
+        CheckMerge(droppedCard);
+        if (int.Parse(droppedCard.numerator.text) == 1)
             battle.ClearParadox(card);
 
-        battle.CheckEndOfTurns();
+        //battle.CheckEndOfTurns();
     }
     public void CheckWin()
     {

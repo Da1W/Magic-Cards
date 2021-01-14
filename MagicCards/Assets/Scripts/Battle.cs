@@ -23,10 +23,12 @@ public class Battle : MonoBehaviour
     private float playerScore = 0;
     private float botScore = 0;
     private BattleBot bot;
+    private GameObject backSpawnPoint;
     [SerializeField] Text playerScoreText;
     [SerializeField] Text botScoreText;
     [SerializeField] GameObject WinTable;
     [SerializeField] GameObject LoseTable;
+    [SerializeField] TextMeshProUGUI plusScorePrefab;
 
     Dictionary<int, GameObject> suits = new Dictionary<int, GameObject>(4);
 
@@ -44,6 +46,7 @@ public class Battle : MonoBehaviour
         suits.Add(2, diamondPref);
         suits.Add(3, spadePref);
 
+        backSpawnPoint = GameObject.Find("Background");
         allCells = GameObject.FindGameObjectsWithTag("Cell")
             .Select(comp => comp.GetComponent<CellSlot>())
             .Where(comp => comp != null).ToArray();
@@ -155,6 +158,8 @@ public class Battle : MonoBehaviour
 
     private void SumScoreOnMap()
     {
+        var previousScorePlayer = playerScore;
+        var previousScoreBot = botScore;
         foreach (var cell in allCells)
         {
             var cardInCell = cell.items[0].GetComponent<DragAndDrop>();
@@ -166,6 +171,7 @@ public class Battle : MonoBehaviour
                     playerScore += (float)cardInCell.probability;
             }
         }
+        StartCoroutine(SpawnPlusText(previousScorePlayer, previousScoreBot));
         UpdateScore();
     }
 
@@ -196,6 +202,21 @@ public class Battle : MonoBehaviour
         }
     }
 
+    private IEnumerator SpawnPlusText(float previousScorePlayer, float previousScoreBot)
+    {
+        var playerPlusText = Instantiate(plusScorePrefab, backSpawnPoint.transform);
+        playerPlusText.text = (playerScore - previousScorePlayer).ToString();
+        MoveCard(playerPlusText.gameObject, playerScoreText.gameObject);
+
+        var botPlusText = Instantiate(plusScorePrefab, backSpawnPoint.transform);
+        botPlusText.text = (botScore - previousScoreBot).ToString();
+        botPlusText.color = Color.white;
+        MoveCard(botPlusText.gameObject, botScoreText.gameObject);
+        yield return new WaitForSeconds(2f);
+
+        Destroy(playerPlusText.gameObject);
+        Destroy(botPlusText.gameObject);
+    }
     public void StartGame()
     {
         DealAllCards();
@@ -212,14 +233,14 @@ public class Battle : MonoBehaviour
 
     public void MoveCard(GameObject card, GameObject target)
     {
-        //StartCoroutine(MoveCardCorutine(card, target));
+        StartCoroutine(MoveCardCorutine(card, target));
     }
     public IEnumerator MoveCardCorutine(GameObject card, GameObject target)
     {
         while (card.transform.position != target.transform.position)
         {
-            card.transform.position = Vector2.MoveTowards(card.transform.position, 
-                target.transform.position, Time.deltaTime * 5);
+            card.transform.position = Vector2.MoveTowards(card.transform.position,
+                target.transform.position, Time.deltaTime * 3f);
             yield return null;
         }
     }
@@ -243,5 +264,6 @@ public class Battle : MonoBehaviour
         {
             Destroy(cardsToDelete[i]);
         }
+        CheckEndOfTurns();
     }
 }

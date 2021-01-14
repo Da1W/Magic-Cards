@@ -1622,6 +1622,7 @@ MonoBehaviour:
   botScoreText: {fileID: 1988929264}
   WinTable: {fileID: 2005502663}
   LoseTable: {fileID: 861668100}
+  plusScorePrefab: {fileID: 3711523268160298360, guid: 1d54eeb4fa6739a4baada592cebcf320, type: 3}
 --- !u!1 &530335739
 GameObject:
   m_ObjectHideFlags: 0

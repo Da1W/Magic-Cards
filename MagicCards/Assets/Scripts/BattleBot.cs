@@ -59,7 +59,7 @@ public class BattleBot : MonoBehaviour
     {
         var card = slots[Random.Range(0, slots.Length - 1)].transform.GetChild(0).gameObject;
         var cardProp = card.GetComponent<DragAndDrop>();
-
+        cardProp.SendBeginDragEvent();
         cardProp.handler = "bot";
         cardProp.probability = suitsManager.CalculateProbability(card);
         cardProp.numerator.text = suitsManager.GetCurrentSuit(card).ToString();

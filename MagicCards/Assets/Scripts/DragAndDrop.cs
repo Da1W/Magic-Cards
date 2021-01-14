@@ -20,9 +20,10 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
     public static event OnCardDrag OnCardDragEnd;
 
     private RectTransform rectTransform;
-    private CanvasGroup canvasGroup;
+    public CanvasGroup canvasGroup;
     private Canvas canvas;
 
+    public static DragAndDrop singleton;
     public void Start()
     {
         suitsManager = FindObjectOfType<SuitsManager>();
@@ -35,17 +36,12 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
 
     private void Awake()
     {
+        singleton = this;
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (!Battle.IsPlayerTurn || IsInCell)
-        {
-            eventData.Reset();
-            return;
-        }
-
         startPosition = gameObject.transform;
         if (!IsInCell)
         {
@@ -60,6 +56,11 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
 
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 0.7f;
+        SendBeginDragEvent();
+    }
+
+    public void SendBeginDragEvent()
+    {
         OnCardDragBegin?.Invoke();
     }
 
@@ -92,9 +93,16 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
         //    }
         //}
 
-        canvasGroup.blocksRaycasts = true;
-        canvasGroup.alpha = 1f;
         OnCardDragEnd?.Invoke();
+
+        if (GameConstants.gameMode == 1)
+            canvasGroup.blocksRaycasts = true;
+        else if (!IsInCell)
+            canvasGroup.blocksRaycasts = true;
+        else
+            canvasGroup.blocksRaycasts = false;
+
+        canvasGroup.alpha = 1f;
     }
 
     public void BackIntoPos()
@@ -146,13 +154,19 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
 
     private void OnBlockRaycast()
     {
+        if (GameConstants.gameMode == 2 && IsInCell) return;
         canvasGroup.blocksRaycasts = true;
     }
 
     private void OnDestroy()
     {
-        OnCardDragEnd?.Invoke();
+        SendEndDragEvent();
         OnCardDragBegin -= OffBlockRaycast;
         OnCardDragEnd -= OnBlockRaycast;
+    }
+
+    public void SendEndDragEvent()
+    {
+        OnCardDragEnd?.Invoke();
     }
 }
