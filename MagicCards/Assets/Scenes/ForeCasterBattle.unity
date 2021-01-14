@@ -10982,6 +10982,7 @@ MonoBehaviour:
   trainingManager: {fileID: 0}
   IsCellEmpty: 1
   neighbours: []
+  singleton: {fileID: 0}
 --- !u!114 &8060492481796423284
 MonoBehaviour:
   m_ObjectHideFlags: 0

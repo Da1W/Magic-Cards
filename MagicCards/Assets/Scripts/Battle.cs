@@ -5,6 +5,7 @@ using System;
 using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
+using DG.Tweening;
 
 public class Battle : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class Battle : MonoBehaviour
     public GameObject diamondPref;
     public GameObject spadePref;
     public static bool IsPlayerTurn;
+    public bool IsGameStarted = false;
 
     private int handSize = 4;
     [HideInInspector] public CellSlot[] allCells;
@@ -29,6 +31,7 @@ public class Battle : MonoBehaviour
     [SerializeField] GameObject WinTable;
     [SerializeField] GameObject LoseTable;
     [SerializeField] TextMeshProUGUI plusScorePrefab;
+    [SerializeField] TextMeshProUGUI turnText;
 
     Dictionary<int, GameObject> suits = new Dictionary<int, GameObject>(4);
 
@@ -37,9 +40,15 @@ public class Battle : MonoBehaviour
         UpdateScore();
         GameConstants.roundNumber = 1;
         if (UnityEngine.Random.Range(0, 2) == 0)
+        {
             IsPlayerTurn = true;
+            turnText.text = "Ты ходишь первым в этот раз";
+        }
         else
+        {
             IsPlayerTurn = false;
+            turnText.text = "Я хожу первым в этот раз";
+        }
 
         suits.Add(0, heartPref);
         suits.Add(1, clubPref);
@@ -136,18 +145,18 @@ public class Battle : MonoBehaviour
         }
 
         var playerSlots = GetSlotsFromHand(playerHand);
-        playerSlots.Where(comp => comp.transform.childCount != 0);
+        playerSlots = playerSlots.Where(comp => comp.transform.childCount != 0).ToArray();
 
-        if (playerSlots == null)
+        if (IsPlayerTurn && playerSlots.Length == 0)
         {
             SumScoreOnMap();
             Invoke(nameof(RoundOver), 2f);
             return;
         }
         var botSlots = GetSlotsFromHand(botHand);
-        botSlots.Where(comp => comp.transform.childCount != 0);
+        botSlots = botSlots.Where(comp => comp.transform.childCount != 0).ToArray();
 
-        if (botSlots == null)
+        if (!IsPlayerTurn && botSlots.Length == 0)
         {
             SumScoreOnMap();
             Invoke(nameof(RoundOver), 2f);
@@ -162,9 +171,10 @@ public class Battle : MonoBehaviour
         var previousScoreBot = botScore;
         foreach (var cell in allCells)
         {
-            var cardInCell = cell.items[0].GetComponent<DragAndDrop>();
-            if (cardInCell != null)
+
+            if (cell.items.Count != 0)
             {
+                var cardInCell = cell.items[0].GetComponent<DragAndDrop>();
                 if (cardInCell.handler == "bot")
                     botScore += (float)cardInCell.probability;
                 else
@@ -179,7 +189,7 @@ public class Battle : MonoBehaviour
     {
         if (suitsManager.pack >= 4)
         {
-            StopAllCoroutines();
+            //StopAllCoroutines();
             Debug.Log("NextRound");
             GameConstants.roundNumber += 1;
             FindObjectOfType<Training>().UpdateRoundNumber();
@@ -217,14 +227,22 @@ public class Battle : MonoBehaviour
         Destroy(playerPlusText.gameObject);
         Destroy(botPlusText.gameObject);
     }
+    
     public void StartGame()
     {
+        IsGameStarted = true;
+        bot.TurnOnPreview();
         DealAllCards();
         bot.ReloadPreviewCards();
         ClearMap();
         if (!IsPlayerTurn) bot.BotTurn();
     }
 
+    public void ShowStartDialog()
+    {
+        if (IsGameStarted)
+            GameObject.Find("EnemyDialog").SetActive(false);
+    }
     public void DealAllCards()
     {
         DealTheCards(playerHand);
@@ -237,12 +255,14 @@ public class Battle : MonoBehaviour
     }
     public IEnumerator MoveCardCorutine(GameObject card, GameObject target)
     {
-        while (card.transform.position != target.transform.position)
-        {
-            card.transform.position = Vector2.MoveTowards(card.transform.position,
-                target.transform.position, Time.deltaTime * 3f);
-            yield return null;
-        }
+        card.transform.DOMove(target.transform.position, 2f);
+        yield return null;
+        //while (card.transform.localPosition != target.transform.localPosition)
+        //{
+        //    card.transform.position = Vector2.MoveTowards(card.transform.position,
+        //        target.transform.position, Time.deltaTime * 3f);
+        //    yield return null;
+        //}
     }
 
     public void ClearParadox(GameObject card)
