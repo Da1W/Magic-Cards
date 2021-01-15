@@ -6,10 +6,15 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, IDragHandler, IPointerUpHandler
 {
     private static Deck DECK;
+    [SerializeField] GameObject MagicBallCard;
+    [SerializeField] GameObject MagicBallBet;
+    [SerializeField] GameObject MagicBallMainBet;
+    [SerializeField] GameObject MagicBallChangeTurn;
     [SerializeField] GameObject unknownCardPref;
     [SerializeField] GameObject DeckImage;
     [SerializeField] GameObject Field;
@@ -19,10 +24,11 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
     [SerializeField] Sprite ClubPref;
     [SerializeField] Sprite DiamondPref;
     [SerializeField] TextMeshProUGUI ValueText;
-    [SerializeField] GameObject MagicBall;
     [SerializeField] GameObject BetButton;
     [SerializeField] GameObject OppText;
     [SerializeField] GameObject BetText;
+    [SerializeField] GameObject RateGO;
+    [SerializeField] GameObject AnswerButtonsGO;
     [SerializeField] GameObject BetButtonsGO;
     [SerializeField] GameObject WinText;
     [SerializeField] GameObject WinTable;
@@ -43,17 +49,25 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
 
 
     private GameObject draggedCard;
+    private GameObject oppDragCard;
     private bool isCardDown = false;
     private Card currentCard;
     private int betValue;
     private Card.Suits betSuit;
-    private int OppBetValue;
-    private Card.Suits OppBetSuit;
+    private int? OppBetValue;
+    private Card.Suits? OppBetSuit;
     private float rate;
     private float winChance;
     private Button currentSuitButton;
     private Button currentValueButton;
-
+    private Button currentAnswerButton;
+    private bool isTutorialEnd = false;
+    private GameStates gameState = GameStates.BetState;
+    enum GameStates
+    {
+        BetState,
+        AnswerState
+    }
     private float Rate
     {
         get { return rate; } 
@@ -81,11 +95,12 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
     private bool OppAnswer;
     private bool Win;
     private bool OppWin;
-    private List<string> AbleButons;
+    private bool firstTurn = true;
+    private List<string> AvailableButons;
     class Card
     {
-        public Cards value { get; private set; }
-        public Suits suit { get; private set; }
+        public Cards? value { get; private set; }
+        public Suits? suit { get; private set; }
 
         public Card(Cards value,Suits suit)
         {
@@ -161,6 +176,25 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
             }
             Debug.Log(count);
         }
+
+        public bool CanBet(Card.Suits? suit,int? value)
+        {
+            var valueCond = (value != null) && (((int)value == 9 && lower10 != 0) || ((int)value == 10 && equal10 != 0) || ((int)value == 11 && higher10 != 0));
+            return valueCond || (suit != null && cards.Where(card => card.suit == suit).Count() != 0);
+        }
+
+        public float GetRate(Card.Suits? suit,int? value)
+        {
+            var valueRate = 1f;
+            var suitRate = 1f;
+            var suitCount = cards.Where(card => card.suit == suit).Count();
+            if (value != null && value == 9) valueRate = 1f / lower10Chance;
+            if (value != null && value == 10) valueRate = 1f / equal10Chance;
+            if (value != null && value == 11) valueRate = 1f / higher10Chance;
+            if (suit != null) suitRate = 1f/(suitCount/count);
+            return valueRate * suitRate;
+        }
+
         public void RemoveCard(Card card) => cards.Remove(card);
         
     }
@@ -173,7 +207,7 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (isCardDown) return;
+        if (isCardDown || gameState == GameStates.AnswerState) return;
         var data = PointerRaycast(eventData.position); // пускаем луч
 
         if (data != null && data.tag != "Cell")
@@ -187,7 +221,11 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
             isCardDown = true;
             CreateCard(); 
             ActivateBetButtons();
-            MagicBall.SetActive(false);
+            if (!isTutorialEnd)
+            {
+                MagicBallCard.SetActive(false);
+                MagicBallBet.SetActive(true);
+            }
         }
     }
 
@@ -198,13 +236,13 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (isCardDown) return;
+        if (isCardDown || gameState == GameStates.AnswerState) return;
         draggedCard.GetComponent<RectTransform>().anchoredPosition += eventData.delta / Canvas.scaleFactor;
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (isCardDown) return; 
+        if (isCardDown || gameState == GameStates.AnswerState) return; 
         draggedCard = Instantiate(unknownCardPref, DeckImage.transform);
         draggedCard.transform.position = eventData.pointerCurrentRaycast.worldPosition;
             //DeckImage.transform.position;
@@ -361,15 +399,35 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
 
     public void WeDoBet()
     {
-        OppAnswer = UnityEngine.Random.Range(0, 2) == 1;
-        Invoke(nameof(GetAIAnswer), 0.75f);
-        Invoke(nameof(ShowCard), 1.5f);
-        WeDoBetLogic();
-        Invoke(nameof(CalcScores), 2f);
-        Invoke(nameof(ShowTurnResult), 3f);
-        DeactivateMainBetButton();
-        DeactivateBetButtons();
+        if (!isTutorialEnd)
+        {
+            MagicBallMainBet.SetActive(false);
+            isTutorialEnd = true;
+        }
+
+        if (gameState == GameStates.BetState)
+        {
+            OppAnswer = UnityEngine.Random.Range(0, 2) == 1;
+            Invoke(nameof(GetAIAnswer), 0.75f);
+            Invoke(nameof(ShowCard), 1.5f);
+            WeDoBetLogic();
+            Invoke(nameof(CalcScores), 2f);
+            Invoke(nameof(ShowTurnResult), 3f);
+            DeactivateMainBetButton();
+            DeactivateBetButtons();
+        }
+
+        if (gameState == GameStates.AnswerState)
+        {
+            Invoke(nameof(ShowCard), 1.5f);
+            OppDoBetLogic();
+            Invoke(nameof(CalcScores), 2f);
+            Invoke(nameof(ShowTurnResult), 3f);
+            DeactivateMainBetButton();
+            DeactivateBetButtons();
+        }
     }
+
     private void WeDoBetLogic()
     {
         Bank = Rate;
@@ -390,43 +448,76 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
         DECK.RemoveCard(currentCard);
     }
 
+    private void OppDoBetLogic()
+    {
+        OppRate = DECK.GetRate(OppBetSuit,OppBetValue);
+        Bank = OppRate;
+        if (OppBetValue != null && OppBetSuit == null)
+        {
+            Win = OppBetValue > 10 && (int)currentCard.value > 10 || OppBetValue < 10 && (int)currentCard.value < 10 || OppBetValue == 10 && (int)currentCard.value == 10;
+        }
+        if (OppBetValue == null && OppBetSuit != null)
+        {
+            Win = OppBetSuit == currentCard.suit;
+        }
+        if (OppBetValue != null && OppBetSuit != null)
+        {
+            Win = (OppBetValue > 10 && (int)currentCard.value > 10 || OppBetValue < 10 && (int)currentCard.value < 10 || OppBetValue == 10 && (int)currentCard.value == 10) 
+                && OppBetSuit == currentCard.suit;
+        }
+        OppWin = Win == Answer;
+
+        DECK.RemoveCard(currentCard);
+    }
+
     private void CalcScores()
     {
+        var winValue = 0f;
+        var oppWinValue = 0f;
         if (Win && OppWin)
         {
-            Score += (float)Math.Round(Bank * 0.7f,2);
-            WinValue.text = Math.Round(Bank * 0.7f,2).ToString();
-            OppScore += (float)Math.Round(Bank * 0.3f,2);
-            OppWinValue.text = Math.Round(Bank * 0.3f,2).ToString();
-
+            winValue = (float)Math.Round(Bank * 0.7f, 2);
+            oppWinValue = (float)Math.Round(Bank * 0.3f, 2);
+            
             Field.GetComponent<Image>().color = new Color(0.6f, 1f, 0.6f);
             Bank = 0;
         }
         if (Win && !OppWin)
         {
-            Score += (float)Math.Round(Bank,2);
-            WinValue.text = Math.Round(Bank,2).ToString();
-            OppWinValue.text = "0";
+            winValue = (float)Math.Round(Bank, 2);
+            oppWinValue = 0;
 
             Field.GetComponent<Image>().color = new Color(0.6f, 1f, 0.6f);
             Bank = 0;
         }
         if (!Win && OppWin)
         {
-            OppScore += (float)Math.Round(1 / (1 - Mathf.Pow(Bank, -1f)),2);
-            OppWinValue.text = ((float)Math.Round(1 / (1 - Mathf.Pow(Bank, -1f)), 2)).ToString();
-            WinValue.text = "0";
+            oppWinValue = (float)Math.Round(1 / (1 - Mathf.Pow(Bank, -1f)), 2);
+            winValue = 0;
 
             Field.GetComponent<Image>().color = new Color(1f, 0.6f, 0.6f);
             Bank = 0;
         }
         if (!Win && !OppWin)
         {
-            WinValue.text = "0";
-            OppWinValue.text = "0";
+            winValue = 0;
+            oppWinValue = 0;
+            
             Field.GetComponent<Image>().color = new Color(1f, 0.6f, 0.6f);
             Bank = 0;
         }
+        if (gameState == GameStates.BetState)
+        {
+            Score += winValue;
+            OppScore += oppWinValue;
+        }
+        if (gameState == GameStates.AnswerState)
+        {
+            Score += oppWinValue;
+            OppScore += winValue;
+        }
+        WinValue.text = winValue.ToString();
+        OppWinValue.text = oppWinValue.ToString();
     }
 
     private void ShowTurnResult()
@@ -457,6 +548,8 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
         
         valueRate = 1f;
         suitRate = 1f;
+        OppBetSuit = null;
+        OppBetValue = null;
         if (currentValueButton)
         {
             currentValueButton.gameObject.GetComponent<Image>().color = Color.white;
@@ -467,12 +560,58 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
             currentSuitButton.gameObject.GetComponent<Image>().color = Color.white;
             currentSuitButton = null;
         }
+        if (currentAnswerButton)
+        {
+            currentAnswerButton.gameObject.GetComponent<Image>().color = Color.white;
+            currentAnswerButton = null;
+            AnswerButtonsGO.GetComponent<CanvasGroup>().alpha = 0.5f;
+            AnswerButtonsGO.GetComponent<CanvasGroup>().blocksRaycasts = false;
+        }
         OppText.GetComponentInChildren<TextMeshProUGUI>().text = "Думаю...";
         OppText.GetComponent<Image>().color = Color.white;
+        
+        if(!firstTurn) ChangeTurn();
+        firstTurn = false;
     }
 
     public void OnClick(Button btn)
     {
+        if (!isTutorialEnd)
+        {
+            MagicBallBet.SetActive(false);
+            MagicBallMainBet.SetActive(true);
+        }
+
+        if (btn.name.Contains("Answer"))
+        {
+            if (currentAnswerButton && btn == currentAnswerButton)
+            {
+                currentAnswerButton.gameObject.GetComponent<Image>().color = Color.white;
+                currentAnswerButton = null;
+                DeactivateMainBetButton();
+                return;
+            }
+            if (!currentAnswerButton) currentAnswerButton = btn;
+            currentAnswerButton.gameObject.GetComponent<Image>().color = Color.white;
+            currentAnswerButton = btn;
+            currentAnswerButton.gameObject.GetComponent<Image>().color = new Color(0.3f, 1f, 0.35f);
+            if (currentAnswerButton.name.Contains("Yes"))
+            {
+                var winchance = Mathf.Pow(DECK.GetRate(OppBetSuit, OppBetValue), -1);
+                WinChanceText.text = Math.Round(winchance * 100, 2) + "%";
+                Answer = true;
+            }
+            if (currentAnswerButton.name.Contains("No"))
+            {
+                var winchance = 1 - Mathf.Pow(DECK.GetRate(OppBetSuit, OppBetValue), -1);
+                WinChanceText.text = Math.Round(winchance * 100, 2) + "%";
+                Answer = false;
+            }
+            
+            ActivateMainBetButton();
+            return;
+        }
+
         if (btn.name.Contains("10"))
         {
             if(currentValueButton && btn == currentValueButton)
@@ -511,44 +650,120 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
         }
     }
 
+    private void ChangeTurn()
+    {
+        if (gameState == GameStates.BetState)
+        {
+            gameState = GameStates.AnswerState;
+            RateGO.SetActive(false);
+            BetButtonsGO.SetActive(false);
+            AnswerButtonsGO.SetActive(true);
+            Invoke(nameof(DoOppTurn), 1f);
+            return;
+        }
+        if (gameState == GameStates.AnswerState)
+        {
+            gameState = GameStates.BetState;
+            RateGO.SetActive(true);
+            BetButtonsGO.SetActive(true);
+            AnswerButtonsGO.SetActive(false);
+            return;
+        }
+    }
+
+    private void SetCardBigScale()
+    {
+        draggedCard.transform.localScale = new Vector3(3f, 3f, 3f);
+    }
+    private void DoOppTurn()
+    {
+        draggedCard = Instantiate(unknownCardPref, DeckImage.transform);
+        draggedCard.transform.localPosition = new Vector3(0f,0f,0f);
+        draggedCard.transform.DOLocalMove(new Vector3(-575f, 25f, 0f),1f);
+        Invoke(nameof(SetCardBigScale),1.2f);
+        
+        CreateCard();
+
+        if (UnityEngine.Random.Range(0, 2) == 1)
+            OppBetSuit = (Card.Suits)UnityEngine.Random.Range(0, 4);
+        else
+        {
+            OppBetSuit = null;
+            OppBetValue = 10 + UnityEngine.Random.Range(-1, 2);
+        }
+        if (UnityEngine.Random.Range(0, 2) == 1)
+            OppBetValue = 10 + UnityEngine.Random.Range(-1, 2);
+        else
+        {
+            OppBetValue = null;
+            OppBetSuit = (Card.Suits)UnityEngine.Random.Range(0, 4);
+        }
+
+        if (!DECK.CanBet(OppBetSuit, OppBetValue))
+        {
+            DoOppTurn();
+            return;
+        }
+        
+        Invoke(nameof(SayOppBet), 2f);
+    }
+
+    private void SayOppBet()
+    {
+        string SuitText = "";
+        string ValueText = "";
+        if (OppBetSuit != null && OppBetSuit == Card.Suits.Spade) SuitText = " Пики";
+        if (OppBetSuit != null && OppBetSuit == Card.Suits.Heart) SuitText = " Черви";
+        if (OppBetSuit != null && OppBetSuit == Card.Suits.Club) SuitText = " Крести";
+        if (OppBetSuit != null && OppBetSuit == Card.Suits.Diamond) SuitText = " Буби";
+
+        if (OppBetValue != null && OppBetValue == 11) ValueText = "Больше Десяти ";
+        if (OppBetValue != null && OppBetValue == 10) ValueText = "Десять ";
+        if (OppBetValue != null && OppBetValue == 9) ValueText = "Меньше Десяти ";
+
+        OppText.GetComponentInChildren<TextMeshProUGUI>().text = $"Ставлю на то, что эта карта{SuitText} {ValueText}! ";
+        AnswerButtonsGO.GetComponent<CanvasGroup>().alpha = 1;
+        AnswerButtonsGO.GetComponent<CanvasGroup>().blocksRaycasts = true;
+    }
+
     public void OffUnableButtons()
     {
-        AbleButons = BetButtonsGO.GetComponentsInChildren<Transform>().Select(comp => comp.gameObject.name).ToList();
+        AvailableButons = BetButtonsGO.GetComponentsInChildren<Transform>().Select(comp => comp.gameObject.name).ToList();
 
-        if (DECK.spades == 0 && AbleButons.Contains("BetSpade"))
+        if (DECK.spades == 0 && AvailableButons.Contains("BetSpade"))
         {
             BetButtonsGO.GetComponentsInChildren<Transform>().Where(go => go.name == "BetSpade").Last().gameObject.SetActive(false);
-            AbleButons.Remove("BetSpade");
+            AvailableButons.Remove("BetSpade");
         }
-        if (DECK.hearts == 0 && AbleButons.Contains("BetHeart"))
+        if (DECK.hearts == 0 && AvailableButons.Contains("BetHeart"))
         {
             BetButtonsGO.GetComponentsInChildren<Transform>().Where(go => go.name == "BetHeart").Last().gameObject.SetActive(false);
-            AbleButons.Remove("BetSHeart");
+            AvailableButons.Remove("BetSHeart");
         }
-        if (DECK.clubs == 0 && AbleButons.Contains("BetClub"))
+        if (DECK.clubs == 0 && AvailableButons.Contains("BetClub"))
         {
             BetButtonsGO.GetComponentsInChildren<Transform>().Where(go => go.name == "BetClub").Last().gameObject.SetActive(false);
-            AbleButons.Remove("BetClub");
+            AvailableButons.Remove("BetClub");
         }
-        if (DECK.diamonds == 0 && AbleButons.Contains("BetDiamond"))
+        if (DECK.diamonds == 0 && AvailableButons.Contains("BetDiamond"))
         {
             BetButtonsGO.GetComponentsInChildren<Transform>().Where(go => go.name == "BetDiamond").Last().gameObject.SetActive(false);
-            AbleButons.Remove("BetDiamond");
+            AvailableButons.Remove("BetDiamond");
         }
-        if (DECK.lower10 == 0 && AbleButons.Contains("BetLower10"))
+        if (DECK.lower10 == 0 && AvailableButons.Contains("BetLower10"))
         {
             BetButtonsGO.GetComponentsInChildren<Transform>().Where(go => go.name == "BetLower10").Last().gameObject.SetActive(false);
-            AbleButons.Remove("BetLower10");
+            AvailableButons.Remove("BetLower10");
         }
-        if (DECK.equal10 == 0 && AbleButons.Contains("Bet10"))
+        if (DECK.equal10 == 0 && AvailableButons.Contains("Bet10"))
         {
             BetButtonsGO.GetComponentsInChildren<Transform>().Where(go => go.name == "Bet10").Last().gameObject.SetActive(false);
-            AbleButons.Remove("Bet10");
+            AvailableButons.Remove("Bet10");
         }
-        if (DECK.higher10 == 0 && AbleButons.Contains("BetHigher10"))
+        if (DECK.higher10 == 0 && AvailableButons.Contains("BetHigher10"))
         {
             BetButtonsGO.GetComponentsInChildren<Transform>().Where(go => go.name == "BetHigher10").Last().gameObject.SetActive(false);
-            AbleButons.Remove("BetHigher10");
+            AvailableButons.Remove("BetHigher10");
         }
     }
 
