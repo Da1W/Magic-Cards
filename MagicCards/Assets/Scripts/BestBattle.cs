@@ -423,11 +423,11 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
         {
             OppAnswer = UnityEngine.Random.Range(0, 2) == 1;
             Invoke(nameof(SayBet), 0.3f);
-            Invoke(nameof(GetAIAnswer), 0.75f);
-            Invoke(nameof(ShowCard), 1.5f);
+            Invoke(nameof(GetAIAnswer), 1.75f);
+            Invoke(nameof(ShowCard), 3.25f);
             WeDoBetLogic();
-            Invoke(nameof(CalcScores), 2f);
-            Invoke(nameof(ShowTurnResult), 3f);
+            Invoke(nameof(CalcScores), 4f);
+            Invoke(nameof(ShowTurnResult), 5f);
             DeactivateMainBetButton();
             DeactivateBetButtons();
         }
@@ -437,8 +437,8 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
             Invoke(nameof(GetPlayerAnswer), 0.3f);
             Invoke(nameof(ShowCard), 1.5f);
             OppDoBetLogic();
-            Invoke(nameof(CalcScores), 2f);
-            Invoke(nameof(ShowTurnResult), 3f);
+            Invoke(nameof(CalcScores), 3f);
+            Invoke(nameof(ShowTurnResult), 4f);
             DeactivateMainBetButton();
             DeactivateBetButtons();
         }

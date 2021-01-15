@@ -9,8 +9,8 @@ using DG.Tweening;
 
 public class Battle : MonoBehaviour
 {
-    public GameObject playerHand;
-    public GameObject botHand;
+        public GameObject playerHand;
+        public GameObject botHand;
 
     public GameObject heartPref;
     public GameObject clubPref;
@@ -39,7 +39,7 @@ public class Battle : MonoBehaviour
     {
         UpdateScore();
         GameConstants.roundNumber = 1;
-        if (UnityEngine.Random.Range(0, 2) == 0)
+        if (UnityEngine.Random.Range(1, 2) == 0)
         {
             IsPlayerTurn = true;
             turnText.text = "Ты ходишь первым в этот раз";

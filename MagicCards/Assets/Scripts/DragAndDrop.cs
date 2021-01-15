@@ -23,7 +23,7 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
     public CanvasGroup canvasGroup;
     private Canvas canvas;
 
-    public static DragAndDrop singleton;
+    //public static DragAndDrop singleton;
     public void Start()
     {
         suitsManager = FindObjectOfType<SuitsManager>();
@@ -36,12 +36,24 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
 
     private void Awake()
     {
-        singleton = this;
+        //singleton = this;
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
+        OnCardDragBegin -= OffBlockRaycast;
+        OnCardDragBegin += OffBlockRaycast;
+        OnCardDragEnd -= OnBlockRaycast;
+        OnCardDragEnd += OnBlockRaycast;
     }
+
+    private void OnEnable()
+    {
+        
+    }
+
     public void OnBeginDrag(PointerEventData eventData)
     {
+        //if(!Battle.IsPlayerTurn) return;
+
         startPosition = gameObject.transform;
         if (!IsInCell)
         {
@@ -61,17 +73,22 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
 
     public void SendBeginDragEvent()
     {
+        OnCardDragBegin -= OffBlockRaycast;
+        OnCardDragBegin += OffBlockRaycast;
         OnCardDragBegin?.Invoke();
     }
 
     public void OnDrag(PointerEventData eventData)
     {
+        //if (!Battle.IsPlayerTurn) return;
         rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
         //Debug.Log(PointerRaycast(eventData.position));
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        //if (!Battle.IsPlayerTurn) return;
+
         var data = PointerRaycast(eventData.position); // пускаем луч
 
         if (data != null && data.tag != "Cell")
