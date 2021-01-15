@@ -76,4 +76,9 @@ public class BattleBot : MonoBehaviour
         yield return new WaitForSeconds(1f);
         card.SetActive(false);
     }
+    public void TurnOnPreview()
+    {
+        foreach (var prevCard in previewCards)
+            prevCard.SetActive(true);
+    }
 }
