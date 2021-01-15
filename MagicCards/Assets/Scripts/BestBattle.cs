@@ -26,6 +26,7 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
     [SerializeField] TextMeshProUGUI ValueText;
     [SerializeField] GameObject BetButton;
     [SerializeField] GameObject OppText;
+    [SerializeField] GameObject PlayerBetText;
     [SerializeField] GameObject BetText;
     [SerializeField] GameObject RateGO;
     [SerializeField] GameObject AnswerButtonsGO;
@@ -52,8 +53,8 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
     private GameObject oppDragCard;
     private bool isCardDown = false;
     private Card currentCard;
-    private int betValue;
-    private Card.Suits betSuit;
+    private int? betValue;
+    private Card.Suits? betSuit;
     private int? OppBetValue;
     private Card.Suits? OppBetSuit;
     private float rate;
@@ -187,7 +188,7 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
         {
             var valueRate = 1f;
             var suitRate = 1f;
-            var suitCount = cards.Where(card => card.suit == suit).Count();
+            float suitCount = cards.Where(card => card.suit == suit).Count();
             if (value != null && value == 9) valueRate = 1f / lower10Chance;
             if (value != null && value == 10) valueRate = 1f / equal10Chance;
             if (value != null && value == 11) valueRate = 1f / higher10Chance;
@@ -342,6 +343,20 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
         }
     }
 
+    private void GetPlayerAnswer()
+    {
+        if (Answer)
+        {
+            PlayerBetText.GetComponentInChildren<TextMeshProUGUI>().text = "Верю";
+            PlayerBetText.GetComponent<Image>().color = new Color(0.4f, 1f, 0.4f);
+        }
+        else
+        {
+            PlayerBetText.GetComponentInChildren<TextMeshProUGUI>().text = "Не верю";
+            PlayerBetText.GetComponent<Image>().color = new Color(1f, 0.4f, 0.4f);
+        }
+    }
+
     public void BetToSpade()
     {
         Rate = valueRate;
@@ -402,12 +417,12 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
         if (!isTutorialEnd)
         {
             MagicBallMainBet.SetActive(false);
-            isTutorialEnd = true;
         }
 
         if (gameState == GameStates.BetState)
         {
             OppAnswer = UnityEngine.Random.Range(0, 2) == 1;
+            Invoke(nameof(SayBet), 0.3f);
             Invoke(nameof(GetAIAnswer), 0.75f);
             Invoke(nameof(ShowCard), 1.5f);
             WeDoBetLogic();
@@ -419,6 +434,7 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
 
         if (gameState == GameStates.AnswerState)
         {
+            Invoke(nameof(GetPlayerAnswer), 0.3f);
             Invoke(nameof(ShowCard), 1.5f);
             OppDoBetLogic();
             Invoke(nameof(CalcScores), 2f);
@@ -510,14 +526,16 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
         {
             Score += winValue;
             OppScore += oppWinValue;
+            WinValue.text = winValue.ToString();
+            OppWinValue.text = oppWinValue.ToString();
         }
         if (gameState == GameStates.AnswerState)
         {
             Score += oppWinValue;
             OppScore += winValue;
+            WinValue.text = oppWinValue.ToString();
+            OppWinValue.text = winValue.ToString();
         }
-        WinValue.text = winValue.ToString();
-        OppWinValue.text = oppWinValue.ToString();
     }
 
     private void ShowTurnResult()
@@ -550,6 +568,8 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
         suitRate = 1f;
         OppBetSuit = null;
         OppBetValue = null;
+        betSuit = null;
+        betValue = null;
         if (currentValueButton)
         {
             currentValueButton.gameObject.GetComponent<Image>().color = Color.white;
@@ -567,16 +587,18 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
             AnswerButtonsGO.GetComponent<CanvasGroup>().alpha = 0.5f;
             AnswerButtonsGO.GetComponent<CanvasGroup>().blocksRaycasts = false;
         }
-        OppText.GetComponentInChildren<TextMeshProUGUI>().text = "Думаю...";
+        OppText.GetComponentInChildren<TextMeshProUGUI>().text = "...";
         OppText.GetComponent<Image>().color = Color.white;
-        
-        if(!firstTurn) ChangeTurn();
+        PlayerBetText.GetComponentInChildren<TextMeshProUGUI>().text = "...";
+        PlayerBetText.GetComponent<Image>().color = Color.white;
+
+        if (!firstTurn) ChangeTurn();
         firstTurn = false;
     }
 
     public void OnClick(Button btn)
     {
-        if (!isTutorialEnd)
+        if (!isTutorialEnd && !btn.name.Contains("Answer"))
         {
             MagicBallBet.SetActive(false);
             MagicBallMainBet.SetActive(true);
@@ -584,6 +606,12 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
 
         if (btn.name.Contains("Answer"))
         {
+            if (!isTutorialEnd)
+            {
+                MagicBallChangeTurn.SetActive(false);
+                isTutorialEnd = true;
+            }
+
             if (currentAnswerButton && btn == currentAnswerButton)
             {
                 currentAnswerButton.gameObject.GetComponent<Image>().color = Color.white;
@@ -655,6 +683,7 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
         if (gameState == GameStates.BetState)
         {
             gameState = GameStates.AnswerState;
+            DeckImage.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.5f);
             RateGO.SetActive(false);
             BetButtonsGO.SetActive(false);
             AnswerButtonsGO.SetActive(true);
@@ -664,6 +693,7 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
         if (gameState == GameStates.AnswerState)
         {
             gameState = GameStates.BetState;
+            DeckImage.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
             RateGO.SetActive(true);
             BetButtonsGO.SetActive(true);
             AnswerButtonsGO.SetActive(false);
@@ -677,13 +707,6 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
     }
     private void DoOppTurn()
     {
-        draggedCard = Instantiate(unknownCardPref, DeckImage.transform);
-        draggedCard.transform.localPosition = new Vector3(0f,0f,0f);
-        draggedCard.transform.DOLocalMove(new Vector3(-575f, 25f, 0f),1f);
-        Invoke(nameof(SetCardBigScale),1.2f);
-        
-        CreateCard();
-
         if (UnityEngine.Random.Range(0, 2) == 1)
             OppBetSuit = (Card.Suits)UnityEngine.Random.Range(0, 4);
         else
@@ -704,7 +727,14 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
             DoOppTurn();
             return;
         }
-        
+
+        draggedCard = Instantiate(unknownCardPref, DeckImage.transform);
+        draggedCard.transform.localPosition = new Vector3(0f, 0f, 0f);
+        draggedCard.transform.DOLocalMove(new Vector3(-575f, 25f, 0f), 1f);
+        Invoke(nameof(SetCardBigScale), 1.2f);
+
+        CreateCard();
+
         Invoke(nameof(SayOppBet), 2f);
     }
 
@@ -721,9 +751,28 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
         if (OppBetValue != null && OppBetValue == 10) ValueText = "Десять ";
         if (OppBetValue != null && OppBetValue == 9) ValueText = "Меньше Десяти ";
 
-        OppText.GetComponentInChildren<TextMeshProUGUI>().text = $"Ставлю на то, что эта карта{SuitText} {ValueText}! ";
+        OppText.GetComponentInChildren<TextMeshProUGUI>().text = $"Ставлю на то, что эта Карта{SuitText} {ValueText}! ";
         AnswerButtonsGO.GetComponent<CanvasGroup>().alpha = 1;
         AnswerButtonsGO.GetComponent<CanvasGroup>().blocksRaycasts = true;
+        if (!isTutorialEnd)
+        {
+            MagicBallChangeTurn.SetActive(true);
+        }
+    }
+    private void SayBet()
+    {
+        string SuitText = "";
+        string ValueText = "";
+        if (betSuit != null && betSuit == Card.Suits.Spade) SuitText = " Пики";
+        if (betSuit != null && betSuit == Card.Suits.Heart) SuitText = " Черви";
+        if (betSuit != null && betSuit == Card.Suits.Club) SuitText = " Крести";
+        if (betSuit != null && betSuit == Card.Suits.Diamond) SuitText = " Буби";
+
+        if (betValue != null && betValue == 11) ValueText = "Больше Десяти ";
+        if (betValue != null && betValue == 10) ValueText = "Десять ";
+        if (betValue != null && betValue == 9) ValueText = "Меньше Десяти ";
+
+        PlayerBetText.GetComponentInChildren<TextMeshProUGUI>().text = $"Ставлю на то, что эта Карта{SuitText} {ValueText}! ";
     }
 
     public void OffUnableButtons()
