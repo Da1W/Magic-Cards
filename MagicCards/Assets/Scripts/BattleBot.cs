@@ -29,21 +29,21 @@ public class BattleBot : MonoBehaviour
 
     public void BotTurn()
     {
-            var emptyCells = battle.allCells.Where(comp => comp.IsCellEmpty).ToArray();
+        var emptyCells = battle.allCells.Where(comp => comp.IsCellEmpty).ToArray();
 
-            var slots = hand.GetComponentsInChildren<Transform>()
-                .Where(comp => comp.gameObject.tag == "Slot")
-                .Select(comp => comp.gameObject)
-                .Where(comp => comp.transform.childCount != 0)
-                .ToArray();
+        var notEmptySlots = hand.GetComponentsInChildren<Transform>()
+            .Where(comp => comp.gameObject.tag == "Slot")
+            .Select(comp => comp.gameObject)
+            .Where(comp => comp.transform.childCount != 0)
+            .ToArray();
 
-            if (emptyCells.Length == 0 || slots.Length == 0)
-                return;
+        if (emptyCells.Length == 0 || notEmptySlots.Length == 0)
+            return;
 
-            var activePrevCards = previewCards.Where(comp => comp.activeInHierarchy).ToArray();
-            var cardToSet = activePrevCards[Random.Range(0, activePrevCards.Length - 1)];
-            //StartCoroutine(WaitForThink());
-            SetCard(emptyCells, slots, cardToSet);
+        var activePrevCards = previewCards.Where(comp => comp.activeInHierarchy).ToArray();
+        var cardToSet = activePrevCards[Random.Range(0, activePrevCards.Length - 1)];
+        //StartCoroutine(WaitForThink());
+        SetCard(emptyCells, notEmptySlots, cardToSet);
     }
 
     public void ReloadPreviewCards()
@@ -60,6 +60,10 @@ public class BattleBot : MonoBehaviour
         var card = slots[Random.Range(0, slots.Length - 1)].transform.GetChild(0).gameObject;
         var cardProp = card.GetComponent<DragAndDrop>();
         cardProp.SendBeginDragEvent();
+        var playerHand = battle.playerHand.GetComponent<CanvasGroup>();
+        playerHand.blocksRaycasts = false;
+        playerHand.alpha = 0.5f;
+
         cardProp.handler = "bot";
         cardProp.probability = suitsManager.CalculateProbability(card);
         cardProp.numerator.text = suitsManager.GetCurrentSuit(card).ToString();
@@ -73,7 +77,7 @@ public class BattleBot : MonoBehaviour
 
     private IEnumerator HideAfterSeconds(GameObject card)
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
         card.SetActive(false);
     }
     public void TurnOnPreview()

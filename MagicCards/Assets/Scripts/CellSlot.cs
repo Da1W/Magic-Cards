@@ -195,7 +195,9 @@ public class CellSlot : MonoBehaviour, IDropHandler
 
         Battle.IsPlayerTurn = true;
         IsCellEmpty = false;
-
+        var playerHand = battle.playerHand.GetComponent<CanvasGroup>();
+        playerHand.blocksRaycasts = true;
+        playerHand.alpha = 1f;
         card.GetComponent<RectTransform>().sizeDelta =
             cellSlotFake.GetComponent<RectTransform>().sizeDelta;
         SetCorrectPositions();
