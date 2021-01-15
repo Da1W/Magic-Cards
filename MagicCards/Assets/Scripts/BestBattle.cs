@@ -169,7 +169,7 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
 
         public void RandomizeDeck()
         {
-            var rndCount = UnityEngine.Random.Range(17,23);
+            var rndCount = UnityEngine.Random.Range(12,17);
             Debug.Log(rndCount);
             for(int i = 0; i < 52 - rndCount; i++)
             {
@@ -648,6 +648,7 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
                 valueRate = 1f;
                 Rate = suitRate;
                 currentValueButton = null;
+                betValue = null;
                 if (!currentSuitButton || Rate == 1) DeactivateMainBetButton();
                 return;
             }
@@ -666,6 +667,7 @@ public class BestBattle : MonoBehaviour, IPointerDownHandler, IEndDragHandler, I
                 suitRate = 1f;
                 Rate = valueRate;
                 currentSuitButton = null;
+                betSuit = null;
                 if (!currentValueButton || Rate == 1) DeactivateMainBetButton();
                 return;
             }
