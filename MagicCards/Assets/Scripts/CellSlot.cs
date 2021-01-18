@@ -167,7 +167,7 @@ public class CellSlot : MonoBehaviour, IDropHandler
     private IEnumerator Merge(DragAndDrop droppedObject, DragAndDrop otherCard, CellSlot cellSlot)
     {
         battle.MoveCard(otherCard.gameObject, droppedObject.gameObject);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(2.2f);
         battle.StopAllCoroutines();
         if (droppedObject != null)
         {

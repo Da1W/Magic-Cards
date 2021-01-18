@@ -7,9 +7,7 @@ using TMPro;
 
 public class Training : MonoBehaviour
 {
-    [SerializeField] Text stepsCount;
     [SerializeField] TextMeshProUGUI levelText;
-    [SerializeField] Text helperText;
     private int steps = 0;
 
     public GameObject[] correct;
@@ -19,7 +17,6 @@ public class Training : MonoBehaviour
     void Start()
     {
         CellSlotsOnMap = FindObjectsOfType<CellSlot>();
-        stepsCount.text = "Количество ходов: 0";
         if (GameConstants.gameMode == 1)
             levelText.text = "Уровень " + GameConstants.levelNumber;
         else
@@ -100,7 +97,6 @@ public class Training : MonoBehaviour
     public void PlusStep()
     {
         steps++;
-        stepsCount.text = "Количество ходов: " + steps.ToString();
     }
 
     public void ToMenuAndShowChoose()

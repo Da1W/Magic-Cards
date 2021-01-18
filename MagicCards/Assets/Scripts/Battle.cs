@@ -39,15 +39,15 @@ public class Battle : MonoBehaviour
     {
         UpdateScore();
         GameConstants.roundNumber = 1;
-        if (UnityEngine.Random.Range(1, 2) == 0)
+        if (UnityEngine.Random.Range(0, 2) == 0)
         {
             IsPlayerTurn = true;
-            turnText.text = "Ты ходишь первым в этот раз";
+            turnText.text = "Ты ходишь первым в этот раз.";
         }
         else
         {
             IsPlayerTurn = false;
-            turnText.text = "Я хожу первым в этот раз";
+            turnText.text = "Я хожу первым в этот раз.";
         }
 
         suits.Add(0, heartPref);
@@ -74,7 +74,6 @@ public class Battle : MonoBehaviour
         botScoreText.text = $"Противник: {botScore} очков";
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.F) && suitsManager.pack >= 4)
@@ -82,7 +81,6 @@ public class Battle : MonoBehaviour
             DealTheCards(playerHand);
             DealTheCards(botHand);
             bot.ReloadPreviewCards();
-            //StopAllCoroutines();
         }
         if (Input.GetKeyDown(KeyCode.C))
             ClearMap();
@@ -283,6 +281,7 @@ public class Battle : MonoBehaviour
         for (var i = 0; i < cardsToDelete.Length; i++)
         {
             Destroy(cardsToDelete[i]);
+            //bot.DeleteRandomPreviewCard();
         }
         CheckEndOfTurns();
     }

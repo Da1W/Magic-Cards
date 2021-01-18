@@ -27,6 +27,12 @@ public class BattleBot : MonoBehaviour
         }
     }
 
+    public void DeleteRandomPreviewCard()
+    {
+        var activePrevCards = previewCards.Where(comp => comp.activeInHierarchy).ToArray();
+        var cardToSet = activePrevCards[Random.Range(0, activePrevCards.Length - 1)];
+        Destroy(cardToSet);
+    }
     public void BotTurn()
     {
         var emptyCells = battle.allCells.Where(comp => comp.IsCellEmpty).ToArray();
@@ -38,7 +44,10 @@ public class BattleBot : MonoBehaviour
             .ToArray();
 
         if (emptyCells.Length == 0 || notEmptySlots.Length == 0)
+        {
+            //battle.CheckEndOfTurns();
             return;
+        }
 
         var activePrevCards = previewCards.Where(comp => comp.activeInHierarchy).ToArray();
         var cardToSet = activePrevCards[Random.Range(0, activePrevCards.Length - 1)];
