@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
@@ -11,8 +12,8 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler
     public double probability;
     public SuitsManager suitsManager;
     public Transform startPosition;
-    public Text numerator;
-    public Text denominator;
+    public TextMeshProUGUI numerator;
+    public TextMeshProUGUI denominator;
     public GameObject decimLine;
     public string handler;
     public delegate void OnCardDrag();

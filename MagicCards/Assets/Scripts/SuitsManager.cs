@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class SuitsManager : MonoBehaviour
 {
@@ -10,11 +11,11 @@ public class SuitsManager : MonoBehaviour
     [HideInInspector] public Dictionary<string, int> suits = new Dictionary<string, int>();
     public int pack;
 
-    public Text packText;
-    public Text spadesText;
-    public Text heartsText;
-    public Text clubsText;
-    public Text diamondsText;
+    public TextMeshProUGUI packText;
+    public TextMeshProUGUI spadesText;
+    public TextMeshProUGUI heartsText;
+    public TextMeshProUGUI clubsText;
+    public TextMeshProUGUI diamondsText;
 
     void Start()
     {

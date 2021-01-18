@@ -26,8 +26,8 @@ public class Battle : MonoBehaviour
     private float botScore = 0;
     private BattleBot bot;
     private GameObject backSpawnPoint;
-    [SerializeField] Text playerScoreText;
-    [SerializeField] Text botScoreText;
+    [SerializeField] TextMeshProUGUI playerScoreText;
+    [SerializeField] TextMeshProUGUI botScoreText;
     [SerializeField] GameObject WinTable;
     [SerializeField] GameObject LoseTable;
     [SerializeField] TextMeshProUGUI plusScorePrefab;
